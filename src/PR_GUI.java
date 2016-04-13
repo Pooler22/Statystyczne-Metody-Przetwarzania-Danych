@@ -85,6 +85,7 @@ public class PR_GUI extends javax.swing.JFrame {
         TrainingLabel = new javax.swing.JLabel();
         TrainSetSizeTextField = new javax.swing.JTextField();
         PercentLabel = new javax.swing.JLabel();
+        ResultTextField = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -369,30 +370,43 @@ public class PR_GUI extends javax.swing.JFrame {
 
         PercentLabel.setText("%");
 
+        ResultTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ResultTextFieldActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout ClassifierPanelLayout = new javax.swing.GroupLayout(ClassifierPanel);
         ClassifierPanel.setLayout(ClassifierPanelLayout);
         ClassifierPanelLayout.setHorizontalGroup(
             ClassifierPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ClassifierPanelLayout.createSequentialGroup()
-                .addGap(8, 8, 8)
-                .addComponent(ClassifierLabel))
+                .addGap(22, 22, 22)
+                .addComponent(ResultTextField)
+                .addContainerGap())
             .addGroup(ClassifierPanelLayout.createSequentialGroup()
-                .addGap(12, 12, 12)
-                .addComponent(MethodLabel)
-                .addGap(24, 24, 24)
-                .addComponent(MethodComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(ClassifierPanelLayout.createSequentialGroup()
-                .addGap(38, 38, 38)
-                .addComponent(TrainButton, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(72, 72, 72)
-                .addComponent(ExecuteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(ClassifierPanelLayout.createSequentialGroup()
-                .addGap(18, 18, 18)
-                .addComponent(TrainingLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(10, 10, 10)
-                .addComponent(TrainSetSizeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(10, 10, 10)
-                .addComponent(PercentLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(ClassifierPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(ClassifierPanelLayout.createSequentialGroup()
+                        .addGap(8, 8, 8)
+                        .addComponent(ClassifierLabel))
+                    .addGroup(ClassifierPanelLayout.createSequentialGroup()
+                        .addGap(38, 38, 38)
+                        .addComponent(TrainButton, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(72, 72, 72)
+                        .addComponent(ExecuteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ClassifierPanelLayout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(TrainingLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(10, 10, 10)
+                        .addComponent(TrainSetSizeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(10, 10, 10)
+                        .addComponent(PercentLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ClassifierPanelLayout.createSequentialGroup()
+                        .addGap(12, 12, 12)
+                        .addComponent(MethodLabel)
+                        .addGap(24, 24, 24)
+                        .addComponent(MethodComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         ClassifierPanelLayout.setVerticalGroup(
             ClassifierPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -404,7 +418,9 @@ public class PR_GUI extends javax.swing.JFrame {
                         .addGap(3, 3, 3)
                         .addComponent(MethodLabel))
                     .addComponent(MethodComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(69, 69, 69)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(ResultTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(ClassifierPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(TrainButton)
                     .addComponent(ExecuteButton))
@@ -520,22 +536,27 @@ public class PR_GUI extends javax.swing.JFrame {
 
         // first step: split dataset (in new feature space) into training / testing parts
         if(FNew==null) return; // no reduced feature space have been derived
-        Classifier Cl;
+        
         
         String selectedItem = (String)MethodComboBox.getSelectedItem();
         
         if(selectedItem.equals("Nearest neighbor (NN)")){
-            Cl = new NNClassifier();
+            Classifier Cl = new NNClassifier(ClassLabels, SampleCount);
             Cl.generateTraining_and_Test_Sets(FNew, TrainSetSizeTextField.getText());
+            ResultTextField.setText(Double.toString(Cl.classify()));
         
             } 
         else if(selectedItem.equals("Nearest Mean (NM)")){
-            Cl = new NMClassifier();
+            Classifier Cl = new NMClassifier(ClassLabels, SampleCount);
             Cl.generateTraining_and_Test_Sets(FNew, TrainSetSizeTextField.getText());
-        
+            ResultTextField.setText(Double.toString(Cl.classify()));
         }
 
     }//GEN-LAST:event_TrainButtonActionPerformed
+
+    private void ResultTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ResultTextFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ResultTextFieldActionPerformed
 
     /**
     * @param args the command line arguments
@@ -579,6 +600,7 @@ public class PR_GUI extends javax.swing.JFrame {
     private javax.swing.JLabel PercentLabel;
     private javax.swing.JButton ReadDatasetButton;
     private javax.swing.JPanel ResoultsPanel;
+    private javax.swing.JTextField ResultTextField;
     private javax.swing.JButton TrainButton;
     private javax.swing.JTextField TrainSetSizeTextField;
     private javax.swing.JLabel TrainingLabel;
