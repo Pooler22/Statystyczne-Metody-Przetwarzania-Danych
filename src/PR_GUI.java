@@ -537,19 +537,18 @@ public class PR_GUI extends javax.swing.JFrame {
         // first step: split dataset (in new feature space) into training / testing parts
         if(FNew==null) return; // no reduced feature space have been derived
         
-        
         String selectedItem = (String)MethodComboBox.getSelectedItem();
         
         if(selectedItem.equals("Nearest neighbor (NN)")){
             Classifier Cl = new NNClassifier(ClassLabels, SampleCount);
             Cl.generateTraining_and_Test_Sets(FNew, TrainSetSizeTextField.getText());
-            ResultTextField.setText(Double.toString(Cl.classify()));
+            ResultTextField.setText(Double.toString(Cl.cauculate()));
         
             } 
         else if(selectedItem.equals("Nearest Mean (NM)")){
             Classifier Cl = new NMClassifier(ClassLabels, SampleCount);
             Cl.generateTraining_and_Test_Sets(FNew, TrainSetSizeTextField.getText());
-            ResultTextField.setText(Double.toString(Cl.classify()));
+            ResultTextField.setText(Double.toString(Cl.cauculate()));
         }
 
     }//GEN-LAST:event_TrainButtonActionPerformed
@@ -717,6 +716,8 @@ public class PR_GUI extends javax.swing.JFrame {
                     max_ind = i;
                 }
             }
+            FNew = new double[1][];
+            FNew[0]=F[max_ind];
             ValueFSWinnerLabel.setText(max_ind+"");
             ValueFLDWinnerLabel.setText(FLD+"");
         }
