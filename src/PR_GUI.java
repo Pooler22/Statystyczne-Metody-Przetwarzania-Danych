@@ -540,14 +540,14 @@ public class PR_GUI extends javax.swing.JFrame {
         
         if(selectedItem.equals("Nearest neighbor (NN)")){
             Classifier Cl = new NNClassifier(ClassLabels, SampleCount);
-            Cl.generateTraining_and_Test_Sets(FNew, TrainSetSizeTextField.getText());
-            ResultTextField.setText(Double.toString(Cl.cauculate()));
+            Cl.generateTrainingAndTestSets(FNew, TrainSetSizeTextField.getText());
+            ResultTextField.setText(Double.toString(Cl.execute()));
         
             } 
         else if(selectedItem.equals("Nearest Mean (NM)")){
             Classifier Cl = new NMClassifier(ClassLabels, SampleCount);
-            Cl.generateTraining_and_Test_Sets(FNew, TrainSetSizeTextField.getText());
-            ResultTextField.setText(Double.toString(Cl.cauculate()));
+            Cl.generateTrainingAndTestSets(FNew, TrainSetSizeTextField.getText());
+            ResultTextField.setText(Double.toString(Cl.execute()));
         }
 
     }//GEN-LAST:event_TrainButtonActionPerformed

@@ -18,50 +18,51 @@ class NNClassifier extends Classifier {
         super(ClassLabels, SampleCount);
     }
 
-    @Override
-    protected void trainClissifier(double[][] TrainSet) {
-  //      super.trainClissifier(TrainSet);
-    }
 
-    private double[] computeDistance(double[] point) {
-        List<Double> distanceA, distanceB;
-        double[] result = new double[2];
+    @Override
+    double execute() {
+        int match = 0;
+        final double percent = 100;
+        double distances[];
+        
+        for(double[] i : TestSet) {
+            distances = distance(dataSet[(int)i[0]]);
+            if(distances[0] < distances[1]){
+                if(ClassLabels[(int)i[0]] == 0)
+                    match++;
+            } else {
+                if(ClassLabels[(int)i[0]] == 1)
+                    match++;
+            }
+        }
+        return percent * match/TestSet.length;
+    }
+    
+    private double[] distance(double[] point) {
+        List<Double> distanceA,distanceB; 
+        double[] result;
+
+        result = new double[2];        
         distanceA = new ArrayList<>();
         distanceB = new ArrayList<>();
+        
         for (double[] i : TrainingSet) {
             if (ClassLabels[(int) i[0]] == 0) {
-                double sumA = 0;
-                for (int j = 0; j < point.length; j++) {
-                    sumA += Math.pow(Dataset[(int) i[0]][j] - point[j], 2);
-                }
-                distanceA.add(Math.sqrt(sumA));
+                distanceA.add(euclidean(point,i));
             } else {
-                double sumB = 0;
-                for (int j = 0; j < point.length; j++) {
-                    sumB += Math.pow(Dataset[(int) i[0]][j] - point[j], 2);
-                }
-                distanceB.add(Math.sqrt(sumB));
+                distanceB.add(euclidean(point,i));
             }
         }
         result[0] = Collections.min(distanceA);
         result[1] = Collections.min(distanceB);
         return result;
     }
-
-    @Override
-    double cauculate() {
-        double distances[];
-        int match = 0;
-        for (double[] i : TestSet) {
-            distances = computeDistance(Dataset[(int) i[0]]);
-            if (distances[0] < distances[1]) {
-                if (ClassLabels[(int) i[0]] == 0) {
-                    match++;
-                }
-            } else if (ClassLabels[(int) i[0]] == 1) {
-                match++;
-            }
+    
+    double euclidean(double[] point, double[] i) {
+        double sum = 0;
+        for (int j = 0; j < point.length; j++) {
+            sum += Math.pow(dataSet[(int) i[0]][j] - point[j], 2);
         }
-        return 100.0 * match / TestSet.length;
+        return Math.sqrt(sum);
     }
 }
