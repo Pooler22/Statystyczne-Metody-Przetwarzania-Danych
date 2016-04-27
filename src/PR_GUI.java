@@ -2,7 +2,6 @@
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-//import java.util.Vector;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import Jama.*;
@@ -561,10 +560,8 @@ public class PR_GUI extends javax.swing.JFrame {
     * @param args the command line arguments
     */
     public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new PR_GUI().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new PR_GUI().setVisible(true);
         });
     }
 
@@ -622,9 +619,9 @@ public class PR_GUI extends javax.swing.JFrame {
         jfc.setFileFilter(filter);
         if(jfc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             try {
-                BufferedReader br = new BufferedReader(new FileReader(jfc.getSelectedFile()));
-                while((s_tmp=br.readLine())!=null) s_out += s_tmp + '$';
-                br.close();
+                try (BufferedReader br = new BufferedReader(new FileReader(jfc.getSelectedFile()))) {
+                    while((s_tmp=br.readLine())!=null) s_out += s_tmp + '$';
+                }
                 ValueDatasetNameLabel.setText(jfc.getSelectedFile().getName());
             } catch (Exception e) {        }
         }
@@ -649,9 +646,9 @@ public class PR_GUI extends javax.swing.JFrame {
         // Determine number of classes, class names and number of samples per class
         boolean New;
         int index=-1;
-        List<String> NameList = new ArrayList<String>();
-        List<Integer> CountList = new ArrayList<Integer>();
-        List<Integer> LabelList = new ArrayList<Integer>();
+        List<String> NameList = new ArrayList<>();
+        List<Integer> CountList = new ArrayList<>();
+        List<Integer> LabelList = new ArrayList<>();
         while(stmp.length()>1){
             saux = stmp.substring(0,stmp.indexOf(' '));
             New = true; 
@@ -666,7 +663,7 @@ public class PR_GUI extends javax.swing.JFrame {
                 CountList.add(0);
             }
             else{
-                CountList.set(index, CountList.get(index).intValue()+1);
+                CountList.set(index, CountList.get(index)+1);
             }           
             LabelList.add(index); // class index for current row
             stmp = stmp.substring(stmp.indexOf('$')+1);
@@ -677,10 +674,10 @@ public class PR_GUI extends javax.swing.JFrame {
             ClassNames[i]=NameList.get(i);
         SampleCount = new int[CountList.size()];
         for(int i=0; i<SampleCount.length; i++)
-            SampleCount[i] = CountList.get(i).intValue()+1;
+            SampleCount[i] = CountList.get(i)+1;
         ClassLabels = new int[LabelList.size()];
         for(int i=0; i<ClassLabels.length; i++)
-            ClassLabels[i] = LabelList.get(i).intValue();
+            ClassLabels[i] = LabelList.get(i);
     }
 
     private void fillFeatureMatrix() throws Exception {

@@ -26,8 +26,8 @@ class NNClassifier extends Classifier {
     private double[] computeDistance(double[] point) {
         List<Double> distanceA, distanceB;
         double[] result = new double[2];
-        distanceA = new ArrayList<Double>();
-        distanceB = new ArrayList<Double>();
+        distanceA = new ArrayList<>();
+        distanceB = new ArrayList<>();
         for (double[] i : TrainingSet) {
             if (ClassLabels[(int) i[0]] == 0) {
                 double sumA = 0;
