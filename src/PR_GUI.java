@@ -5,6 +5,13 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import Jama.*;
+import static com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type.Int;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 /*
  * To change this template, choose Tools | Templates
@@ -704,20 +711,34 @@ public class PR_GUI extends javax.swing.JFrame {
     private void selectFeatures(int[] flags, int d) {
         // for now: check all individual features using 1D, 2-class Fisher criterion
 
-        if(d==1){
-            double FLD=0, tmp;
-            int max_ind=-1;        
+            double tmp[] = new double[FeatureCount];
+            double FLD[]= new double[d];
+            int max_ind[] = new int [FeatureCount];
+            Map<Double,Integer> map;
+            map = new HashMap<Double,Integer>();
+            
             for(int i=0; i<FeatureCount; i++){
-                if((tmp=computeFisherLD(F[i]))>FLD){
-                    FLD=tmp;
-                    max_ind = i;
-                }
+                map.put(computeFisherLD(F[i]),i);
             }
-            FNew = new double[1][];
-            FNew[0]=F[max_ind];
-            ValueFSWinnerLabel.setText(max_ind+"");
-            ValueFLDWinnerLabel.setText(FLD+"");
-        }
+            
+            Map<Double,Integer> map1 = new TreeMap<Double,Integer>(map);
+            Set set2 = map1.entrySet();
+         Iterator iterator2 = set2.iterator();
+         while(iterator2.hasNext()) {
+              Map.Entry me2 = (Map.Entry)iterator2.next();
+              System.out.print(me2.getKey() + ": ");
+              System.out.println(me2.getValue());
+         }  
+            
+            FNew = new double[d][];
+            for(int j =0; j < d; j++ )
+            {
+                FNew[j] = F[max_ind[j]];    
+                ValueFSWinnerLabel.setText(max_ind[j]+" ");
+                ValueFLDWinnerLabel.setText(FLD+" ");
+            }
+            
+        
         // to do: compute for higher dimensional spaces, use e.g. SFS for candidate selection
     }
 
@@ -744,7 +765,7 @@ public class PR_GUI extends javax.swing.JFrame {
     private Matrix extractFeatures(Matrix C, double Ek, int k) {               
         
         Matrix evecs, evals;
-        // compute eigenvalues and eigenvectors
+        // compute eigen values and eigen vectors
         evecs = C.eig().getV();
         evals = C.eig().getD();
         
