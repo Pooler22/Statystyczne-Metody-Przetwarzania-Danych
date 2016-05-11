@@ -734,17 +734,44 @@ public class PR_GUI extends javax.swing.JFrame {
             ValueFLDWinnerLabel.setText(FLD + "");
         } else {
             double FLD = 0, tmp;
-            int max_ind = -1;
+            int max_ind = -1, max_ind2 = -1;
+            Map<Double, String> map;
+            map = new HashMap<>();
+            int a = 0;
             for (int i = 0; i < FeatureCount; i++) {
                 for (int j = i + 1; j < FeatureCount; j++) {
-                    if ((tmp = computeFisherMD(F[i], F[j])) > FLD) {
+                    a++;
+                    tmp = computeFisherMD(F[i], F[j]);
+                    map.put(tmp, i + " " + j);
+                    if (tmp > FLD) {
                         FLD = tmp;
                         max_ind = i;
+                        max_ind2 = j;
+                        System.out.print("NADPISANIE: " + tmp + " " + i + " " + j + "\n");
                     }
                 }
             }
+
+            System.out.print("\n" + a);
+
+            Map<Double, String> map1 = new TreeMap<>(map);
+            Set set2 = map1.entrySet();
+            Iterator iterator2 = set2.iterator();
+            while (iterator2.hasNext()) {
+                Map.Entry me2 = (Map.Entry) iterator2.next();
+                System.out.print(me2.getKey() + ": ");
+                System.out.println(me2.getValue());
+            }
+
             ValueFSWinnerLabel.setText(max_ind + "");
             ValueFLDWinnerLabel.setText(FLD + "");
+        }
+        int max_ind[];
+        max_ind = new int[FeatureCount];
+
+        FNew = new double[d][];
+        for (int j = 0; j < d; j++) {
+            FNew[j] = F[max_ind[j]];
         }
 
         /*
@@ -782,7 +809,7 @@ public class PR_GUI extends javax.swing.JFrame {
 
     private double computeFisherMD(double[] vec1, double[] vec2) {
         // MoreDmensionals, 2-classes
-        int indexA = 0, indexB = 0; 
+        int indexA = 0, indexB = 0;
         double mA = 0, mB = 0, sA = 0, sB = 0;
         double mA2 = 0, mB2 = 0, sA2 = 0, sB2 = 0;
         double[][] A = new double[2][SampleCount[0]],
@@ -824,9 +851,9 @@ public class PR_GUI extends javax.swing.JFrame {
         for (double e : B[1]) {
             e -= mB2;
         }
-        
-        double result = Math.sqrt(Math.pow((mB - mA),2) + Math.pow((mB2 - mA2),2));
-        return Math.abs((result)/(computeCovarianceMatrix(B).det() - computeCovarianceMatrix(A).det()));
+
+        double result = Math.sqrt(Math.pow((mB - mA), 2) + Math.pow((mB2 - mA2), 2));
+        return Math.abs((result) / (computeCovarianceMatrix(B).det() - computeCovarianceMatrix(A).det()));
     }
 
     private double computeFisherLD(double[] vec) {
