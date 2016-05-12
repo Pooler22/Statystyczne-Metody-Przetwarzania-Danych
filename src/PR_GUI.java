@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -184,7 +185,7 @@ public class PR_GUI extends javax.swing.JFrame {
             }
         });
 
-        FisherCriterionComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Fisher discriminant", "Classification error" }));
+        FisherCriterionComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Fisher discriminant", "SFS", "Classification error" }));
         FisherCriterionComboBox.setEnabled(false);
 
         FeatureExtarctionRadioButton.setBackground(new java.awt.Color(255, 255, 204));
@@ -521,7 +522,14 @@ public class PR_GUI extends javax.swing.JFrame {
         if (FeatureSelectionRadioButton.isSelected()) {
             // the chosen strategy is feature selection
             int[] flags = new int[FeatureCount];
-            selectFeatures(flags, Integer.parseInt((String) FSDimensionComboBox.getSelectedItem()));
+            int tmp = Integer.parseInt((String) FSDimensionComboBox.getSelectedItem());
+
+            String tmp1 = (String) FisherCriterionComboBox.getSelectedItem();
+            if (tmp1.equals("SFS")) {
+                selectFeaturesSFS(flags, tmp);
+            } else {
+                selectFeatures(flags, tmp);
+            }
         } else if (FeatureExtarctionRadioButton.isSelected()) {
             double TotEnergy = Double.parseDouble(PCAEnergyTextField.getText()) / 100.0;
             // Target dimension (if k>0) or flag for energy-based dimension (k=0)
@@ -719,28 +727,58 @@ public class PR_GUI extends javax.swing.JFrame {
         int cc = 1;
     }
 
-    private void selectFeatures(int[] flags, int d) {
-        // for now: check all individual features using 1D, 2-class Fisher criterion
-        if (d == 1) {
+    private void selectFeaturesSFS(int[] flags, int d) {
+        //step 1
+        int max = selectFeatures(flags, 1);
+        String out = "";
+        int max1, max_ind = 0;
+        out += String.valueOf(max);
+        //step 2..n
+        for (int j = 1; j < d; j++) {
             double FLD = 0, tmp;
-            int max_ind = -1;
-            for (int i = 0; i < FeatureCount; i++) {
-                if ((tmp = computeFisherLD(F[i])) > FLD) {
-                    FLD = tmp;
-                    max_ind = i;
-                }
-            }
-            ValueFSWinnerLabel.setText(max_ind + "");
-            ValueFLDWinnerLabel.setText(FLD + "");
-        } else {
-            double FLD = 0, tmp;
-            int max_ind = -1, max_ind2 = -1;
+            int max_ind2 = -1;
             Map<Double, String> map;
             map = new HashMap<>();
-            int a = 0;
+
+            for (int i = 0; i < FeatureCount; i++) {
+                if (i != max) {
+                    //max1 = selectFeatures(flags, 2);
+                    tmp = computeFisherMD(F[i], F[max]);
+                    map.put(tmp, i + "");
+                    if (tmp > FLD) {
+                        FLD = tmp;
+                        max_ind = i;
+                        max_ind2 = j;
+                    }
+                }
+            }
+            
+            Map<Double, String> map1 = new TreeMap<>(map);
+            Set set2 = map1.entrySet();
+            Iterator iterator2 = set2.iterator();
+            while (iterator2.hasNext()) {
+                Map.Entry me2 = (Map.Entry) iterator2.next();
+                System.out.print(me2.getKey() + ": ");
+                System.out.println(me2.getValue());
+            }
+            out += " " + (new ArrayList<String>(map1.values())).get(map1.size() - 1);
+        
+        }
+        ValueFSWinnerLabel.setText(out);
+        //ValueFLDWinnerLabel.setText(FLD + "");
+    }
+
+    private int selectFeatures(int[] flags, int d) {
+        int max_ind = -1;
+        if (d == 1) {
+            max_ind = Fisher1D(max_ind);
+        } else {
+            double FLD = 0, tmp;
+            int max_ind2 = -1;
+            Map<Double, String> map;
+            map = new HashMap<>();
             for (int i = 0; i < FeatureCount; i++) {
                 for (int j = i + 1; j < FeatureCount; j++) {
-                    a++;
                     tmp = computeFisherMD(F[i], F[j]);
                     map.put(tmp, i + " " + j);
                     if (tmp > FLD) {
@@ -752,8 +790,6 @@ public class PR_GUI extends javax.swing.JFrame {
                 }
             }
 
-            System.out.print("\n" + a);
-
             Map<Double, String> map1 = new TreeMap<>(map);
             Set set2 = map1.entrySet();
             Iterator iterator2 = set2.iterator();
@@ -762,49 +798,31 @@ public class PR_GUI extends javax.swing.JFrame {
                 System.out.print(me2.getKey() + ": ");
                 System.out.println(me2.getValue());
             }
-
-            ValueFSWinnerLabel.setText(max_ind + "");
-            ValueFLDWinnerLabel.setText(FLD + "");
         }
-        int max_ind[];
-        max_ind = new int[FeatureCount];
+
+        ValueFSWinnerLabel.setText(max_ind + "");
+        //ValueFLDWinnerLabel.setText(FLD + "");
+
+        int max_ind2[];
+        max_ind2 = new int[FeatureCount];
 
         FNew = new double[d][];
         for (int j = 0; j < d; j++) {
-            FNew[j] = F[max_ind[j]];
+            FNew[j] = F[max_ind2[j]];
         }
 
-        /*
-        
-        double tmp[] = new double[FeatureCount];
-        double FLD[] = new double[d];
-        int max_ind[];
-        max_ind = new int[FeatureCount];
-        Map<Double, Integer> map;
-        map = new HashMap<>();
+        return max_ind;
+    }
 
+    private int Fisher1D(int max_ind) {
+        double FLD = 0, tmp;
         for (int i = 0; i < FeatureCount; i++) {
-            map.put(computeFisherLD(F[i]), i);
+            if ((tmp = computeFisherLD(F[i])) > FLD) {
+                FLD = tmp;
+                max_ind = i;
+            }
         }
-
-        Map<Double, Integer> map1 = new TreeMap<>(map);
-        Set set2 = map1.entrySet();
-        Iterator iterator2 = set2.iterator();
-        while (iterator2.hasNext()) {
-            Map.Entry me2 = (Map.Entry) iterator2.next();
-            System.out.print(me2.getKey() + ": ");
-            System.out.println(me2.getValue());
-        }
-
-        FNew = new double[d][];
-        for (int j = 0; j < d; j++) {
-            FNew[j] = F[max_ind[j]];
-            ValueFSWinnerLabel.setText(max_ind[j] + " ");
-            ValueFLDWinnerLabel.setText(Arrays.toString(FLD) + " ");
-        }
-        
-         */
-        // to do: compute for higher dimensional spaces, use e.g. SFS for candidate selection
+        return max_ind;
     }
 
     private double computeFisherMD(double[] vec1, double[] vec2) {
@@ -853,7 +871,7 @@ public class PR_GUI extends javax.swing.JFrame {
         }
 
         double result = Math.sqrt(Math.pow((mB - mA), 2) + Math.pow((mB2 - mA2), 2));
-        return Math.abs((result) / (computeCovarianceMatrix(B).det() - computeCovarianceMatrix(A).det()));
+        return Math.abs((result) / (computeCovarianceMatrix(B).det() + computeCovarianceMatrix(A).det()));
     }
 
     private double computeFisherLD(double[] vec) {
