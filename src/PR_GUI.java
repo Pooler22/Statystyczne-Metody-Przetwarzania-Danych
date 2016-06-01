@@ -186,7 +186,6 @@ public class PR_GUI extends javax.swing.JFrame {
         });
 
         FisherCriterionComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Fisher discriminant", "SFS", "Classification error" }));
-        FisherCriterionComboBox.setEnabled(false);
 
         FeatureExtarctionRadioButton.setBackground(new java.awt.Color(255, 255, 204));
         FeatureExtarctionRadioButton.setText("Feature extraction");
@@ -486,11 +485,13 @@ public class PR_GUI extends javax.swing.JFrame {
 
     private void FeatureSelectionRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FeatureSelectionRadioButtonActionPerformed
         FisherCriterionComboBox.setEnabled(true);
+        FeatureExtarctionRadioButton.setSelected(false);
         PCALDAComboBox.setEnabled(false);
     }//GEN-LAST:event_FeatureSelectionRadioButtonActionPerformed
 
     private void FeatureExtarctionRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FeatureExtarctionRadioButtonActionPerformed
         FisherCriterionComboBox.setEnabled(false);
+        FeatureSelectionRadioButton.setSelected(false);
         PCALDAComboBox.setEnabled(true);
     }//GEN-LAST:event_FeatureExtarctionRadioButtonActionPerformed
 
@@ -526,7 +527,7 @@ public class PR_GUI extends javax.swing.JFrame {
 
             String tmp1 = (String) FisherCriterionComboBox.getSelectedItem();
             if (tmp1.equals("SFS")) {
-                selectFeaturesSFS(flags, tmp);
+                ValueFSWinnerLabel.setText(selectFeaturesSFS(flags, tmp));
             } else {
                 selectFeatures(flags, tmp);
             }
@@ -649,7 +650,7 @@ public class PR_GUI extends javax.swing.JFrame {
     private void getDatasetParameters() throws Exception {
         // based on data stored in InData determine: class count and names, number of samples 
         // and number of features; set the corresponding variables
-        String stmp = InData, saux = "";
+        String stmp = InData, saux;
         // analyze the first line and get feature count: assume that number of features
         // equals number of commas
         saux = InData.substring(InData.indexOf(',') + 1, InData.indexOf('$'));
@@ -727,7 +728,7 @@ public class PR_GUI extends javax.swing.JFrame {
         int cc = 1;
     }
 
-    private void selectFeaturesSFS(int[] flags, int d) {
+    private String selectFeaturesSFS(int[] flags, int d) {
         //step 1
         int max = selectFeatures(flags, 1);
         String out = "";
@@ -761,11 +762,10 @@ public class PR_GUI extends javax.swing.JFrame {
                 System.out.print(me2.getKey() + ": ");
                 System.out.println(me2.getValue());
             }
-            out += " " + (new ArrayList<String>(map1.values())).get(map1.size() - 1);
+            out += " " + (new ArrayList<>(map1.values())).get(map1.size() - 1);
         
         }
-        ValueFSWinnerLabel.setText(out);
-        //ValueFLDWinnerLabel.setText(FLD + "");
+        return out;
     }
 
     private int selectFeatures(int[] flags, int d) {
@@ -857,17 +857,26 @@ public class PR_GUI extends javax.swing.JFrame {
         mA2 /= SampleCount[0];
         mB2 /= SampleCount[1];
 
+        int i;
+        i = 0;
         for (double e : A[0]) {
-            e -= mA;
+            A[0][i] = e - mA;
+            i++;
         }
+        i = 0;
         for (double e : A[1]) {
-            e -= mA2;
+            A[1][i] = e - mA2;
+            i++;
         }
+        i = 0;
         for (double e : B[0]) {
-            e -= mB;
+            B[0][i] = e - mB;
+            i++;
         }
+        i = 0;
         for (double e : B[1]) {
-            e -= mB2;
+            B[1][i] = e - mB2;
+            i++;
         }
 
         double result = Math.sqrt(Math.pow((mB - mA), 2) + Math.pow((mB2 - mA2), 2));
