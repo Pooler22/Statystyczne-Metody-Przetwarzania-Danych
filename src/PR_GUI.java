@@ -5,11 +5,9 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import Jama.*;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -527,9 +525,9 @@ public class PR_GUI extends javax.swing.JFrame {
 
             String tmp1 = (String) FisherCriterionComboBox.getSelectedItem();
             if (tmp1.equals("SFS")) {
-                ValueFSWinnerLabel.setText(selectFeaturesSFS(flags, tmp));
+                ValueFSWinnerLabel.setText(selectFeaturesSFS(flags, tmp) + "");
             } else {
-                selectFeatures(flags, tmp);
+                ValueFSWinnerLabel.setText(selectFeatures(flags, tmp) + "");
             }
         } else if (FeatureExtarctionRadioButton.isSelected()) {
             double TotEnergy = Double.parseDouble(PCAEnergyTextField.getText()) / 100.0;
@@ -554,17 +552,15 @@ public class PR_GUI extends javax.swing.JFrame {
             return; // no reduced feature space have been derived
         }
         String selectedItem = (String) MethodComboBox.getSelectedItem();
-
+        Classifier Cl;
         if (selectedItem.equals("Nearest neighbor (NN)")) {
-            Classifier Cl = new NNClassifier(ClassLabels, SampleCount);
-            Cl.generateTrainingAndTestSets(FNew, TrainSetSizeTextField.getText());
-            ResultTextField.setText(Double.toString(Cl.execute()));
-
-        } else if (selectedItem.equals("Nearest Mean (NM)")) {
-            Classifier Cl = new NMClassifier(ClassLabels, SampleCount);
-            Cl.generateTrainingAndTestSets(FNew, TrainSetSizeTextField.getText());
-            ResultTextField.setText(Double.toString(Cl.execute()));
+            Cl = new NNClassifier(ClassLabels, SampleCount);
+        } else {// if (selectedItem.equals("Nearest Mean (NM)")) {
+            Cl = new NMClassifier(ClassLabels, SampleCount);
         }
+
+        Cl.generateTrainingAndTestSets(FNew, TrainSetSizeTextField.getText());
+        ResultTextField.setText(Double.toString(Cl.execute()));
 
     }//GEN-LAST:event_TrainButtonActionPerformed
 
@@ -743,7 +739,6 @@ public class PR_GUI extends javax.swing.JFrame {
 
             for (int i = 0; i < FeatureCount; i++) {
                 if (i != max) {
-                    //max1 = selectFeatures(flags, 2);
                     tmp = computeFisherMD(F[i], F[max]);
                     map.put(tmp, i + "");
                     if (tmp > FLD) {
@@ -753,17 +748,9 @@ public class PR_GUI extends javax.swing.JFrame {
                     }
                 }
             }
-            
             Map<Double, String> map1 = new TreeMap<>(map);
-            Set set2 = map1.entrySet();
-            Iterator iterator2 = set2.iterator();
-            while (iterator2.hasNext()) {
-                Map.Entry me2 = (Map.Entry) iterator2.next();
-                System.out.print(me2.getKey() + ": ");
-                System.out.println(me2.getValue());
-            }
             out += " " + (new ArrayList<>(map1.values())).get(map1.size() - 1);
-        
+
         }
         return out;
     }
@@ -799,10 +786,6 @@ public class PR_GUI extends javax.swing.JFrame {
                 System.out.println(me2.getValue());
             }
         }
-
-        ValueFSWinnerLabel.setText(max_ind + "");
-        //ValueFLDWinnerLabel.setText(FLD + "");
-
         int max_ind2[];
         max_ind2 = new int[FeatureCount];
 
@@ -810,7 +793,6 @@ public class PR_GUI extends javax.swing.JFrame {
         for (int j = 0; j < d; j++) {
             FNew[j] = F[max_ind2[j]];
         }
-
         return max_ind;
     }
 
@@ -826,7 +808,6 @@ public class PR_GUI extends javax.swing.JFrame {
     }
 
     private double computeFisherMD(double[] vec1, double[] vec2) {
-        // MoreDmensionals, 2-classes
         int indexA = 0, indexB = 0;
         double mA = 0, mB = 0, sA = 0, sB = 0;
         double mA2 = 0, mB2 = 0, sA2 = 0, sB2 = 0;
@@ -884,7 +865,6 @@ public class PR_GUI extends javax.swing.JFrame {
     }
 
     private double computeFisherLD(double[] vec) {
-        // 1D, 2-classes
         double mA = 0, mB = 0, sA = 0, sB = 0;
         for (int i = 0; i < vec.length; i++) {
             if (ClassLabels[i] == 0) {
@@ -947,7 +927,6 @@ public class PR_GUI extends javax.swing.JFrame {
     }
 
     private Matrix computeCovarianceMatrix(double[][] m) {
-//        double[][] C = new double[M.length][M.length];
         Matrix M = new Matrix(m);
         Matrix MT = M.transpose();
         Matrix C = M.times(MT);
