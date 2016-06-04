@@ -739,7 +739,10 @@ public class PR_GUI extends javax.swing.JFrame {
 
             for (int i = 0; i < FeatureCount; i++) {
                 if (i != max) {
-                    tmp = computeFisherMD(F[i], F[max]);
+                    double G[][] = new double[2][];
+                    G[0] = F[i];
+                    G[1] = F[max];
+                    tmp = computeFisherMD(G);
                     map.put(tmp, i + "");
                     if (tmp > FLD) {
                         FLD = tmp;
@@ -766,7 +769,10 @@ public class PR_GUI extends javax.swing.JFrame {
             map = new HashMap<>();
             for (int i = 0; i < FeatureCount; i++) {
                 for (int j = i + 1; j < FeatureCount; j++) {
-                    tmp = computeFisherMD(F[i], F[j]);
+                    double[][] G = new double[2][];
+                    G[0] = F[i];
+                    G[1] = F[j];
+                    tmp = computeFisherMD(G);
                     map.put(tmp, i + " " + j);
                     if (tmp > FLD) {
                         FLD = tmp;
@@ -807,61 +813,51 @@ public class PR_GUI extends javax.swing.JFrame {
         return max_ind;
     }
 
-    private double computeFisherMD(double[] vec1, double[] vec2) {
-        int indexA = 0, indexB = 0;
-        double mA = 0, mB = 0, sA = 0, sB = 0;
-        double mA2 = 0, mB2 = 0, sA2 = 0, sB2 = 0;
-        double[][] A = new double[2][SampleCount[0]],
-                B = new double[2][SampleCount[1]];
-        for (int i = 0; i < vec1.length; i++) {
-            if (ClassLabels[i] == 0) {
-                mA += vec1[i];
-                A[0][indexA++] = vec1[i];
-            } else {
-                mB += vec1[i];
-                B[0][indexB++] = vec1[i];
+    private double computeFisherMD(double[][] vec) { //vec[0] vac[1] ... vec[n]
+        int indexA;
+        int indexB;
+        double result = 0;
+        double[] mA = new double[vec.length],
+                mB = new double[vec.length];
+
+        double[][]
+                A = new double[vec.length][SampleCount[0]],
+                B = new double[vec.length][SampleCount[1]];
+
+        for (int a = 0; a < vec.length; a++){
+            mA[a] = 0;
+            mB[a] = 0;
+            indexA = 0;
+            indexB = 0;
+            for (int i = 0; i < vec[a].length; i++) {
+                if (ClassLabels[i] == 0) {
+                    mA[a] += vec[a][i];
+                    A[0][indexA++] = vec[a][i];
+                } else {
+                    mB[a] += vec[a][i];
+                    B[0][indexB++] = vec[a][i];
+                }
             }
-        }
-        indexA = indexB = 0;
-        for (int i = 0; i < vec2.length; i++) {
-            if (ClassLabels[i] == 0) {
-                mA2 += vec2[i];
-                A[1][indexA++] = vec2[i];
-            } else {
-                mB2 += vec2[i];
-                B[1][indexB++] = vec2[i];
+
+            mA[a] /= SampleCount[0];
+            mB[a] /= SampleCount[1];
+
+            int i;
+            i = 0;
+            for (double e : A[a]) {
+                A[a][i] = e - mA[a];
+                i++;
             }
+            i = 0;
+            for (double e : B[a]) {
+                B[a][i] = e - mB[a];
+                i++;
+            }
+
+            result += Math.pow((mB[a] - mA[a]), 2);
         }
 
-        mA /= SampleCount[0];
-        mB /= SampleCount[1];
-        mA2 /= SampleCount[0];
-        mB2 /= SampleCount[1];
-
-        int i;
-        i = 0;
-        for (double e : A[0]) {
-            A[0][i] = e - mA;
-            i++;
-        }
-        i = 0;
-        for (double e : A[1]) {
-            A[1][i] = e - mA2;
-            i++;
-        }
-        i = 0;
-        for (double e : B[0]) {
-            B[0][i] = e - mB;
-            i++;
-        }
-        i = 0;
-        for (double e : B[1]) {
-            B[1][i] = e - mB2;
-            i++;
-        }
-
-        double result = Math.sqrt(Math.pow((mB - mA), 2) + Math.pow((mB2 - mA2), 2));
-        return Math.abs((result) / (computeCovarianceMatrix(B).det() + computeCovarianceMatrix(A).det()));
+        return Math.abs((Math.sqrt(result)) / (computeCovarianceMatrix(B).det() + computeCovarianceMatrix(A).det()));
     }
 
     private double computeFisherLD(double[] vec) {
