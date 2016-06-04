@@ -533,10 +533,10 @@ public class PR_GUI extends javax.swing.JFrame {
 //            double[][] FF = { {1,1}, {1,2}};
 //            double[][] FF = { {-2,0,2}, {-1,0,1}};
             // F is an array of initial features, FNew is the resulting array
-            double[][] FFNorm = centerAroundMean(F);
-            Matrix Cov = computeCovarianceMatrix(FFNorm);
+            double[][] FFNorm = Data.centerAroundMean(F);
+            Matrix Cov = Data.computeCovarianceMatrix(FFNorm);
             Matrix TransformMat = extractFeatures(Cov, TotEnergy, k);
-            FNew = projectSamples(new Matrix(FFNorm), TransformMat);
+            FNew = Data.projectSamples(new Matrix(FFNorm), TransformMat);
             // FNew is a matrix with samples projected to a new feature space
             ValueNewDimensionLabel.setText(FNew.length + "");
         }
@@ -762,14 +762,12 @@ public class PR_GUI extends javax.swing.JFrame {
             max_ind = Fisher1D(max_ind);
         } else {
             double FLD = 0, tmp;
-            int max_ind2 = -1;
             Map<Double, String> map;
             map = new HashMap<>();
 
             Generator<Integer> vector = count_combinations(d);
             //k = 2
             for (ICombinatoricsVector<Integer> combination : vector) {
-                int j = 0;
                 double[][] G = new double[d][];
 
                 for(int i=0;i< combination.getSize();i++){
@@ -786,17 +784,15 @@ public class PR_GUI extends javax.swing.JFrame {
 //                    max_ind = ;
                     System.out.println("NADPISANIE: " + tmp + " " + idToString(id));
                 }
-                j++;
 
             }
 
             Map<Double, String> map1 = new TreeMap<>(map);
             Set set2 = map1.entrySet();
-            Iterator iterator2 = set2.iterator();
-            while (iterator2.hasNext()) {
-                Map.Entry me2 = (Map.Entry) iterator2.next();
-                System.out.print(me2.getKey() + ": ");
-                System.out.println(me2.getValue());
+            for (Object aSet2 : set2) {
+                Map.Entry me2 = (Map.Entry) aSet2;
+                    System.out.print(me2.getKey() + ": ");
+                   System.out.println(me2.getValue());
             }
         }
         int max_ind2[];
@@ -810,8 +806,8 @@ public class PR_GUI extends javax.swing.JFrame {
     }
 
 
-    String idToString(int[] id){
-        String str = new String();
+    private String idToString(int[] id){
+        String str = "";
         for(int i : id){
             str += i + " ";
         }
@@ -873,15 +869,14 @@ public class PR_GUI extends javax.swing.JFrame {
             result += Math.pow((mB[a] - mA[a]), 2);
         }
 
-        return Math.abs((Math.sqrt(result)) / (computeCovarianceMatrix(B).det() + computeCovarianceMatrix(A).det()));
+        return Math.abs((Math.sqrt(result)) / (Data.computeCovarianceMatrix(B).det() + Data.computeCovarianceMatrix(A).det()));
     }
 
-    Generator<Integer> count_combinations(int n){
+    private Generator<Integer> count_combinations(int n){
         Vector<Integer> vector = new Vector<>(); //Diamonds are allowed in 7+
         for(int i= 0; i < 64;i++){
             vector.add(i);
         }
-        vector.toString();
         ICombinatoricsVector<Integer> initialVector = Factory.createVector(vector);
         Generator<Integer> gen = Factory.createSimpleCombinationGenerator(initialVector, n);
         for (ICombinatoricsVector<Integer> combination : gen) {
@@ -951,33 +946,4 @@ public class PR_GUI extends javax.swing.JFrame {
          */
         return PM;
     }
-
-    private Matrix computeCovarianceMatrix(double[][] m) {
-        Matrix M = new Matrix(m);
-        Matrix MT = M.transpose();
-        Matrix C = M.times(MT);
-        return C;
-    }
-
-    private double[][] centerAroundMean(double[][] M) {
-        double[] mean = new double[M.length];
-        for (int i = 0; i < M.length; i++) {
-            for (int j = 0; j < M[0].length; j++) {
-                mean[i] += M[i][j];
-            }
-        }
-        for (int i = 0; i < M.length; i++) {
-            mean[i] /= M[0].length;
-        }
-        for (int i = 0; i < M.length; i++) {
-            for (int j = 0; j < M[0].length; j++) {
-                M[i][j] -= mean[i];
-            }
-        }
-        return M;
-    }
-
-    private double[][] projectSamples(Matrix FOld, Matrix TransformMat) {
-        return (FOld.transpose().times(TransformMat)).transpose().getArrayCopy();
-    }
-};
+}
