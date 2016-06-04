@@ -1,15 +1,12 @@
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import Jama.*;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import org.paukov.combinatorics.Factory;
+import org.paukov.combinatorics.Generator;
+import org.paukov.combinatorics.ICombinatoricsVector;
 
 /*
  * To change this template, choose Tools | Templates
@@ -760,6 +757,7 @@ public class PR_GUI extends javax.swing.JFrame {
 
     private int selectFeatures(int[] flags, int d) {
         int max_ind = -1;
+        int[] id=new int [d];
         if (d == 1) {
             max_ind = Fisher1D(max_ind);
         } else {
@@ -767,20 +765,29 @@ public class PR_GUI extends javax.swing.JFrame {
             int max_ind2 = -1;
             Map<Double, String> map;
             map = new HashMap<>();
-            for (int i = 0; i < FeatureCount; i++) {
-                for (int j = i + 1; j < FeatureCount; j++) {
-                    double[][] G = new double[2][];
-                    G[0] = F[i];
-                    G[1] = F[j];
-                    tmp = computeFisherMD(G);
-                    map.put(tmp, i + " " + j);
-                    if (tmp > FLD) {
-                        FLD = tmp;
-                        max_ind = i;
-                        max_ind2 = j;
-                        System.out.print("NADPISANIE: " + tmp + " " + i + " " + j + "\n");
-                    }
+
+            Generator<Integer> vector = count_combinations(d);
+            //k = 2
+            for (ICombinatoricsVector<Integer> combination : vector) {
+                int j = 0;
+                double[][] G = new double[d][];
+
+                for(int i=0;i< combination.getSize();i++){
+
+                    G[i] = F[combination.getValue(i)];
+                    id[i] = combination.getValue(i);
+//                    System.out.print(combination.getValue(i));
                 }
+                tmp = computeFisherMD(G);
+                //System.out.print(" " + combination.getValue(i));
+                map.put(tmp, idToString(id));
+                if (tmp > FLD) {
+                    FLD = tmp;
+//                    max_ind = ;
+                    System.out.println("NADPISANIE: " + tmp + " " + idToString(id));
+                }
+                j++;
+
             }
 
             Map<Double, String> map1 = new TreeMap<>(map);
@@ -800,6 +807,15 @@ public class PR_GUI extends javax.swing.JFrame {
             FNew[j] = F[max_ind2[j]];
         }
         return max_ind;
+    }
+
+
+    String idToString(int[] id){
+        String str = new String();
+        for(int i : id){
+            str += i + " ";
+        }
+        return str;
     }
 
     private int Fisher1D(int max_ind) {
@@ -832,10 +848,10 @@ public class PR_GUI extends javax.swing.JFrame {
             for (int i = 0; i < vec[a].length; i++) {
                 if (ClassLabels[i] == 0) {
                     mA[a] += vec[a][i];
-                    A[0][indexA++] = vec[a][i];
+                    A[a][indexA++] = vec[a][i];
                 } else {
                     mB[a] += vec[a][i];
-                    B[0][indexB++] = vec[a][i];
+                    B[a][indexB++] = vec[a][i];
                 }
             }
 
@@ -858,6 +874,20 @@ public class PR_GUI extends javax.swing.JFrame {
         }
 
         return Math.abs((Math.sqrt(result)) / (computeCovarianceMatrix(B).det() + computeCovarianceMatrix(A).det()));
+    }
+
+    Generator<Integer> count_combinations(int n){
+        Vector<Integer> vector = new Vector<>(); //Diamonds are allowed in 7+
+        for(int i= 0; i < 64;i++){
+            vector.add(i);
+        }
+        vector.toString();
+        ICombinatoricsVector<Integer> initialVector = Factory.createVector(vector);
+        Generator<Integer> gen = Factory.createSimpleCombinationGenerator(initialVector, n);
+        for (ICombinatoricsVector<Integer> combination : gen) {
+            System.out.println(combination);
+        }
+        return gen;
     }
 
     private double computeFisherLD(double[] vec) {
