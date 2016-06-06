@@ -1,6 +1,7 @@
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.IntStream;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import Jama.*;
@@ -167,7 +168,7 @@ public class PR_GUI extends javax.swing.JFrame {
 
         FSDimensionLabel.setText("FS Dimension");
 
-        FSDimensionComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "3" }));
+        FSDimensionComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "3","4","5" }));
 
         CriterionLabel.setText("Criterion");
 
@@ -723,34 +724,48 @@ public class PR_GUI extends javax.swing.JFrame {
 
     private String selectFeaturesSFS(int[] flags, int d) {
         //step 1
-        int max = selectFeatures(flags, 1);
+        int max[] = new int[d];
+        max[0] = selectFeatures(flags, 1);
         String out = "";
         int max1, max_ind = 0;
-        out += String.valueOf(max);
+        //out += String.valueOf(max);
         //step 2..n
+        double G[][] = new double[d][];
+        G[0] = F[max[0]];
         for (int j = 1; j < d; j++) {
+            double tmpG[][] = new double[j][];
+            for(int x = 0; x < j;x++){
+                tmpG[x] = G[x];
+            }
             double FLD = 0, tmp;
             int max_ind2 = -1;
-            Map<Double, String> map;
-            map = new HashMap<>();
-
+            //tmpG[j-1] = F[max[j-1]];
             for (int i = 0; i < FeatureCount; i++) {
-                if (i != max) {
-                    double G[][] = new double[2][];
-                    G[0] = F[i];
-                    G[1] = F[max];
-                    tmp = computeFisherMD(G);
-                    map.put(tmp, i + "");
+                final int finalI = i;
+                if (!IntStream.of(max).anyMatch(x->x == finalI)) {
+                    tmpG[j] = F[i];
+                    tmp = computeFisherMD(tmpG);
                     if (tmp > FLD) {
                         FLD = tmp;
-                        max_ind = i;
-                        max_ind2 = j;
+                        max[j] = i;
+//                        max_ind = i;
+//                        max_ind2 = j;
                     }
                 }
             }
-            Map<Double, String> map1 = new TreeMap<>(map);
-            out += " " + (new ArrayList<>(map1.values())).get(map1.size() - 1);
+            G[j] = F[max[j]];
+        }
 
+        int max_ind2[];
+        max_ind2 = new int[FeatureCount];
+
+        FNew = new double[d][];
+        for (int j = 0; j < d; j++) {
+            FNew[j] = F[max_ind2[j]];
+        }
+
+        for(int tmp: max){
+            out += tmp + " ";
         }
         return out;
     }
