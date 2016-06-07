@@ -94,10 +94,10 @@ public class PR_GUI extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         ReadDatasetButton.setText("Read dataset");
-        ReadDatasetButton.addActionListener(evt -> ReadDatasetButtonActionPerformed(evt));
+        ReadDatasetButton.addActionListener(this::ReadDatasetButtonActionPerformed);
 
         ParseDatasetButton.setText("Parse dataset");
-        ParseDatasetButton.addActionListener(evt -> ParseDatasetButtonActionPerformed(evt));
+        ParseDatasetButton.addActionListener(this::ParseDatasetButtonActionPerformed);
 
         InfoPanel.setBackground(new java.awt.Color(204, 255, 255));
         InfoPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -168,13 +168,13 @@ public class PR_GUI extends javax.swing.JFrame {
         FeatureSelectionRadioButton.setBackground(new java.awt.Color(255, 255, 204));
         FeatureSelectionRadioButton.setSelected(true);
         FeatureSelectionRadioButton.setText("Feature selection");
-        FeatureSelectionRadioButton.addActionListener(evt -> FeatureSelectionRadioButtonActionPerformed(evt));
+        FeatureSelectionRadioButton.addActionListener(this::FeatureSelectionRadioButtonActionPerformed);
 
         FisherCriterionComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"Fisher discriminant", "SFS", "Classification error"}));
 
         FeatureExtarctionRadioButton.setBackground(new java.awt.Color(255, 255, 204));
         FeatureExtarctionRadioButton.setText("Feature extraction");
-        FeatureExtarctionRadioButton.addActionListener(evt -> FeatureExtarctionRadioButtonActionPerformed(evt));
+        FeatureExtarctionRadioButton.addActionListener(this::FeatureExtarctionRadioButtonActionPerformed);
 
         PCALDAComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"PCA", "LDA"}));
         PCALDAComboBox.setEnabled(false);
@@ -338,7 +338,7 @@ public class PR_GUI extends javax.swing.JFrame {
         MethodComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"Nearest neighbor (NN)", "Nearest Mean (NM)", "k-Nearest Neighbor (k-NN)", "k-Nearest Mean (k-NM)"}));
 
         TrainButton.setText("Train");
-        TrainButton.addActionListener(evt -> TrainButtonActionPerformed(evt));
+        TrainButton.addActionListener(this::TrainButtonActionPerformed);
 
         ExecuteButton.setText("Execute");
 
@@ -348,7 +348,7 @@ public class PR_GUI extends javax.swing.JFrame {
 
         PercentLabel.setText("%");
 
-        ResultTextField.addActionListener(evt -> ResultTextFieldActionPerformed(evt));
+        ResultTextField.addActionListener(this::ResultTextFieldActionPerformed);
 
         javax.swing.GroupLayout ClassifierPanelLayout = new javax.swing.GroupLayout(ClassifierPanel);
         ClassifierPanel.setLayout(ClassifierPanelLayout);
@@ -498,7 +498,12 @@ public class PR_GUI extends javax.swing.JFrame {
             if (tmp1.equals("SFS")) {
                 ValueFSWinnerLabel.setText(selectFeaturesSFS(flags, tmp) + "");
             } else {
-                ValueFSWinnerLabel.setText(selectFeatures(flags, tmp) + "");
+                int[] a = selectFeatures(flags, tmp);
+                String out = "";
+                for(int i : a){
+                    out += i + " ";
+                }
+                ValueFSWinnerLabel.setText(out);
             }
         } else if (FeatureExtarctionRadioButton.isSelected()) {
             double TotEnergy = Double.parseDouble(PCAEnergyTextField.getText()) / 100.0;
@@ -701,8 +706,9 @@ public class PR_GUI extends javax.swing.JFrame {
         double G[][] = new double[d][];
         String out = "";
         //step 2..n
-        max[0] = selectFeatures(flags, 1);
+        max[0] = selectFeatures(flags, 1)[0];
         G[0] = F[max[0]];
+
         for (int j = 1; j < d; j++) {
             double FLD = 0, tmp;
             double tmpG[][] = new double[j + 1][];
@@ -723,10 +729,7 @@ public class PR_GUI extends javax.swing.JFrame {
             G[j] = F[max[j]];
         }
 
-        FNew = new double[d][];
-        for (int j = 0; j < d; j++) {
-            FNew[j] = F[max[j]];
-        }
+        updateFNew(d, max);
 
         for (int tmp : max) {
             out += tmp + " ";
@@ -734,8 +737,10 @@ public class PR_GUI extends javax.swing.JFrame {
         return out;
     }
 
-    private int selectFeatures(int[] flags, int d) {
+    private int[] selectFeatures(int[] flags, int d) {
         int[] id = new int[d];
+        int[] max_id = new int[d];
+        String last = "";
         if (d == 1) {
             id[0] = Fisher1D(id[0]);
         } else {
@@ -755,7 +760,7 @@ public class PR_GUI extends javax.swing.JFrame {
                 map.put(tmp, idToString(id));
                 if (tmp > FLD) {
                     FLD = tmp;
-//                    max_ind = ;
+                    //max_id  = id  ;
                     System.out.println("NADPISANIE: " + tmp + " " + idToString(id));
                 }
             }
@@ -764,18 +769,24 @@ public class PR_GUI extends javax.swing.JFrame {
             Set set2 = map1.entrySet();
             for (Object aSet2 : set2) {
                 Map.Entry me2 = (Map.Entry) aSet2;
-                System.out.print(me2.getKey() + ": ");
+                //System.out.print(me2.getKey() + ": ");
                 System.out.println(me2.getValue());
-            }
-        }
-        int max_ind2[];
-        max_ind2 = new int[FeatureCount];
+                last = me2.getValue().toString();
 
+            }
+
+        }
+        System.out.println(last);
+        updateFNew(d, max_id);
+
+        return max_id;
+    }
+
+    private void updateFNew(int d, int[] id) {
         FNew = new double[d][];
         for (int j = 0; j < d; j++) {
-            FNew[j] = F[max_ind2[j]];
+            FNew[j] = F[id[j]];
         }
-        return id[0];
     }
 
 
@@ -846,16 +857,12 @@ public class PR_GUI extends javax.swing.JFrame {
     }
 
     private Generator<Integer> count_combinations(int n) {
-        Vector<Integer> vector = new Vector<>(); //Diamonds are allowed in 7+
-        for (int i = 0; i < 64; i++) {
+        Vector<Integer> vector = new Vector<>();
+        for (int i = 0; i < FeatureCount; i++) {
             vector.add(i);
         }
         ICombinatoricsVector<Integer> initialVector = Factory.createVector(vector);
-        Generator<Integer> gen = Factory.createSimpleCombinationGenerator(initialVector, n);
-        for (ICombinatoricsVector<Integer> combination : gen) {
-            System.out.println(combination);
-        }
-        return gen;
+        return Factory.createSimpleCombinationGenerator(initialVector, n);
     }
 
     private double computeFisherLD(double[] vec) {
