@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.IntStream;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
 import Jama.*;
 import org.paukov.combinatorics.Factory;
 import org.paukov.combinatorics.Generator;
@@ -19,22 +20,22 @@ import org.paukov.combinatorics.ICombinatoricsVector;
  *
  * Created on 2015-03-05, 19:40:56
  */
+
 /**
- *
  * @author krzy
  */
 public class PR_GUI extends javax.swing.JFrame {
 
-    String InData; // dataset from a text file will be placed here
-    int ClassCount = 0, FeatureCount = 0;
-    double[][] F, FNew; // original feature matrix and transformed feature matrix
-    int[] ClassLabels, SampleCount;
-    String[] ClassNames;
+    private String InData; // dataset from a text file will be placed here
+    private int ClassCount = 0, FeatureCount = 0;
+    private double[][] F, FNew; // original feature matrix and transformed feature matrix
+    private int[] ClassLabels, SampleCount;
+    private String[] ClassNames;
 
     /**
      * Creates new form PR_GUI
      */
-    public PR_GUI() {
+    private PR_GUI() {
         initComponents();
         setSize(720, 410);
     }
@@ -93,18 +94,10 @@ public class PR_GUI extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         ReadDatasetButton.setText("Read dataset");
-        ReadDatasetButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ReadDatasetButtonActionPerformed(evt);
-            }
-        });
+        ReadDatasetButton.addActionListener(evt -> ReadDatasetButtonActionPerformed(evt));
 
         ParseDatasetButton.setText("Parse dataset");
-        ParseDatasetButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ParseDatasetButtonActionPerformed(evt);
-            }
-        });
+        ParseDatasetButton.addActionListener(evt -> ParseDatasetButtonActionPerformed(evt));
 
         InfoPanel.setBackground(new java.awt.Color(204, 255, 255));
         InfoPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -125,39 +118,39 @@ public class PR_GUI extends javax.swing.JFrame {
         javax.swing.GroupLayout InfoPanelLayout = new javax.swing.GroupLayout(InfoPanel);
         InfoPanel.setLayout(InfoPanelLayout);
         InfoPanelLayout.setHorizontalGroup(
-            InfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, InfoPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(InfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(InfoPanelLayout.createSequentialGroup()
-                        .addComponent(DatasetNameLabel)
-                        .addGap(18, 18, 18)
-                        .addComponent(ValueDatasetNameLabel))
-                    .addComponent(InfoLabel))
-                .addGroup(InfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(InfoPanelLayout.createSequentialGroup()
-                        .addGap(115, 115, 115)
-                        .addComponent(ClassesLabel))
-                    .addGroup(InfoPanelLayout.createSequentialGroup()
-                        .addGap(94, 94, 94)
-                        .addComponent(FeaturesLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(ValueFeaturesLabel)))
-                .addGap(100, 100, 100))
+                InfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, InfoPanelLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(InfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(InfoPanelLayout.createSequentialGroup()
+                                                .addComponent(DatasetNameLabel)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(ValueDatasetNameLabel))
+                                        .addComponent(InfoLabel))
+                                .addGroup(InfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(InfoPanelLayout.createSequentialGroup()
+                                                .addGap(115, 115, 115)
+                                                .addComponent(ClassesLabel))
+                                        .addGroup(InfoPanelLayout.createSequentialGroup()
+                                                .addGap(94, 94, 94)
+                                                .addComponent(FeaturesLabel)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(ValueFeaturesLabel)))
+                                .addGap(100, 100, 100))
         );
         InfoPanelLayout.setVerticalGroup(
-            InfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(InfoPanelLayout.createSequentialGroup()
-                .addGroup(InfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(InfoLabel)
-                    .addComponent(ClassesLabel))
-                .addGap(10, 10, 10)
-                .addGroup(InfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(DatasetNameLabel)
-                    .addComponent(FeaturesLabel)
-                    .addComponent(ValueDatasetNameLabel)
-                    .addComponent(ValueFeaturesLabel))
-                .addContainerGap(26, Short.MAX_VALUE))
+                InfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(InfoPanelLayout.createSequentialGroup()
+                                .addGroup(InfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(InfoLabel)
+                                        .addComponent(ClassesLabel))
+                                .addGap(10, 10, 10)
+                                .addGroup(InfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(DatasetNameLabel)
+                                        .addComponent(FeaturesLabel)
+                                        .addComponent(ValueDatasetNameLabel)
+                                        .addComponent(ValueFeaturesLabel))
+                                .addContainerGap(26, Short.MAX_VALUE))
         );
 
         FeatureSpacePanel.setBackground(new java.awt.Color(255, 255, 204));
@@ -168,30 +161,22 @@ public class PR_GUI extends javax.swing.JFrame {
 
         FSDimensionLabel.setText("FS Dimension");
 
-        FSDimensionComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "3","4","5" }));
+        FSDimensionComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"1", "2", "3", "4", "5"}));
 
         CriterionLabel.setText("Criterion");
 
         FeatureSelectionRadioButton.setBackground(new java.awt.Color(255, 255, 204));
         FeatureSelectionRadioButton.setSelected(true);
         FeatureSelectionRadioButton.setText("Feature selection");
-        FeatureSelectionRadioButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                FeatureSelectionRadioButtonActionPerformed(evt);
-            }
-        });
+        FeatureSelectionRadioButton.addActionListener(evt -> FeatureSelectionRadioButtonActionPerformed(evt));
 
-        FisherCriterionComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Fisher discriminant", "SFS", "Classification error" }));
+        FisherCriterionComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"Fisher discriminant", "SFS", "Classification error"}));
 
         FeatureExtarctionRadioButton.setBackground(new java.awt.Color(255, 255, 204));
         FeatureExtarctionRadioButton.setText("Feature extraction");
-        FeatureExtarctionRadioButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                FeatureExtarctionRadioButtonActionPerformed(evt);
-            }
-        });
+        FeatureExtarctionRadioButton.addActionListener(evt -> FeatureExtarctionRadioButtonActionPerformed(evt));
 
-        PCALDAComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "PCA", "LDA" }));
+        PCALDAComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"PCA", "LDA"}));
         PCALDAComboBox.setEnabled(false);
 
         EnergyLabel.setText("Energy");
@@ -205,92 +190,88 @@ public class PR_GUI extends javax.swing.JFrame {
         ValueNewDimensionLabel.setText("...");
 
         DeriveFeatureSpaceButton.setText("Derive Feature Space");
-        DeriveFeatureSpaceButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                DeriveFeatureSpaceButtonActionPerformed(evt);
-            }
-        });
+        DeriveFeatureSpaceButton.addActionListener(this::DeriveFeatureSpaceButtonActionPerformed);
 
         javax.swing.GroupLayout FeatureSpacePanelLayout = new javax.swing.GroupLayout(FeatureSpacePanel);
         FeatureSpacePanel.setLayout(FeatureSpacePanelLayout);
         FeatureSpacePanelLayout.setHorizontalGroup(
-            FeatureSpacePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(FeatureSpacePanelLayout.createSequentialGroup()
-                .addGap(12, 12, 12)
-                .addComponent(FeatureLabel)
-                .addGap(46, 46, 46)
-                .addComponent(FSDimensionLabel)
-                .addGap(27, 27, 27)
-                .addComponent(FSDimensionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(FeatureSpacePanelLayout.createSequentialGroup()
-                .addGap(8, 8, 8)
-                .addGroup(FeatureSpacePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(FeatureSelectionRadioButton)
-                    .addGroup(FeatureSpacePanelLayout.createSequentialGroup()
-                        .addGap(190, 190, 190)
-                        .addComponent(CriterionLabel))
-                    .addGroup(FeatureSpacePanelLayout.createSequentialGroup()
-                        .addGap(150, 150, 150)
-                        .addComponent(FisherCriterionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(FeatureSpacePanelLayout.createSequentialGroup()
-                        .addGap(4, 4, 4)
-                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE))))
-            .addGroup(FeatureSpacePanelLayout.createSequentialGroup()
-                .addGap(8, 8, 8)
-                .addComponent(FeatureExtarctionRadioButton)
-                .addGap(65, 65, 65)
-                .addComponent(PCALDAComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(FeatureSpacePanelLayout.createSequentialGroup()
-                .addGap(18, 18, 18)
-                .addComponent(EnergyLabel)
-                .addGap(16, 16, 16)
-                .addComponent(PCAEnergyTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(10, 10, 10)
-                .addComponent(Percent2Label, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(30, 30, 30)
-                .addComponent(NewDimensionLabel)
-                .addGap(35, 35, 35)
-                .addComponent(ValueNewDimensionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(FeatureSpacePanelLayout.createSequentialGroup()
-                .addGap(8, 8, 8)
-                .addComponent(DeriveFeatureSpaceButton, javax.swing.GroupLayout.PREFERRED_SIZE, 292, javax.swing.GroupLayout.PREFERRED_SIZE))
+                FeatureSpacePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(FeatureSpacePanelLayout.createSequentialGroup()
+                                .addGap(12, 12, 12)
+                                .addComponent(FeatureLabel)
+                                .addGap(46, 46, 46)
+                                .addComponent(FSDimensionLabel)
+                                .addGap(27, 27, 27)
+                                .addComponent(FSDimensionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(FeatureSpacePanelLayout.createSequentialGroup()
+                                .addGap(8, 8, 8)
+                                .addGroup(FeatureSpacePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(FeatureSelectionRadioButton)
+                                        .addGroup(FeatureSpacePanelLayout.createSequentialGroup()
+                                                .addGap(190, 190, 190)
+                                                .addComponent(CriterionLabel))
+                                        .addGroup(FeatureSpacePanelLayout.createSequentialGroup()
+                                                .addGap(150, 150, 150)
+                                                .addComponent(FisherCriterionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(FeatureSpacePanelLayout.createSequentialGroup()
+                                                .addGap(4, 4, 4)
+                                                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGroup(FeatureSpacePanelLayout.createSequentialGroup()
+                                .addGap(8, 8, 8)
+                                .addComponent(FeatureExtarctionRadioButton)
+                                .addGap(65, 65, 65)
+                                .addComponent(PCALDAComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(FeatureSpacePanelLayout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addComponent(EnergyLabel)
+                                .addGap(16, 16, 16)
+                                .addComponent(PCAEnergyTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(10, 10, 10)
+                                .addComponent(Percent2Label, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(30, 30, 30)
+                                .addComponent(NewDimensionLabel)
+                                .addGap(35, 35, 35)
+                                .addComponent(ValueNewDimensionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(FeatureSpacePanelLayout.createSequentialGroup()
+                                .addGap(8, 8, 8)
+                                .addComponent(DeriveFeatureSpaceButton, javax.swing.GroupLayout.PREFERRED_SIZE, 292, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         FeatureSpacePanelLayout.setVerticalGroup(
-            FeatureSpacePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(FeatureSpacePanelLayout.createSequentialGroup()
-                .addGroup(FeatureSpacePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(FeatureLabel)
-                    .addGroup(FeatureSpacePanelLayout.createSequentialGroup()
-                        .addGap(7, 7, 7)
-                        .addComponent(FSDimensionLabel))
-                    .addGroup(FeatureSpacePanelLayout.createSequentialGroup()
-                        .addGap(4, 4, 4)
-                        .addComponent(FSDimensionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(13, 13, 13)
-                .addGroup(FeatureSpacePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(FeatureSpacePanelLayout.createSequentialGroup()
-                        .addGap(19, 19, 19)
-                        .addComponent(FeatureSelectionRadioButton))
-                    .addGroup(FeatureSpacePanelLayout.createSequentialGroup()
-                        .addGap(9, 9, 9)
-                        .addComponent(CriterionLabel))
-                    .addGroup(FeatureSpacePanelLayout.createSequentialGroup()
-                        .addGap(29, 29, 29)
-                        .addComponent(FisherCriterionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(20, 20, 20)
-                .addGroup(FeatureSpacePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(FeatureExtarctionRadioButton)
-                    .addComponent(PCALDAComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(17, 17, 17)
-                .addGroup(FeatureSpacePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(EnergyLabel)
-                    .addComponent(PCAEnergyTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(Percent2Label)
-                    .addComponent(NewDimensionLabel)
-                    .addComponent(ValueNewDimensionLabel))
-                .addGap(10, 10, 10)
-                .addComponent(DeriveFeatureSpaceButton))
+                FeatureSpacePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(FeatureSpacePanelLayout.createSequentialGroup()
+                                .addGroup(FeatureSpacePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(FeatureLabel)
+                                        .addGroup(FeatureSpacePanelLayout.createSequentialGroup()
+                                                .addGap(7, 7, 7)
+                                                .addComponent(FSDimensionLabel))
+                                        .addGroup(FeatureSpacePanelLayout.createSequentialGroup()
+                                                .addGap(4, 4, 4)
+                                                .addComponent(FSDimensionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(13, 13, 13)
+                                .addGroup(FeatureSpacePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(FeatureSpacePanelLayout.createSequentialGroup()
+                                                .addGap(19, 19, 19)
+                                                .addComponent(FeatureSelectionRadioButton))
+                                        .addGroup(FeatureSpacePanelLayout.createSequentialGroup()
+                                                .addGap(9, 9, 9)
+                                                .addComponent(CriterionLabel))
+                                        .addGroup(FeatureSpacePanelLayout.createSequentialGroup()
+                                                .addGap(29, 29, 29)
+                                                .addComponent(FisherCriterionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(20, 20, 20)
+                                .addGroup(FeatureSpacePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(FeatureExtarctionRadioButton)
+                                        .addComponent(PCALDAComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(17, 17, 17)
+                                .addGroup(FeatureSpacePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(EnergyLabel)
+                                        .addComponent(PCAEnergyTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(Percent2Label)
+                                        .addComponent(NewDimensionLabel)
+                                        .addComponent(ValueNewDimensionLabel))
+                                .addGap(10, 10, 10)
+                                .addComponent(DeriveFeatureSpaceButton))
         );
 
         ResoultsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Results"));
@@ -306,30 +287,30 @@ public class PR_GUI extends javax.swing.JFrame {
         javax.swing.GroupLayout ResoultsPanelLayout = new javax.swing.GroupLayout(ResoultsPanel);
         ResoultsPanel.setLayout(ResoultsPanelLayout);
         ResoultsPanelLayout.setHorizontalGroup(
-            ResoultsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ResoultsPanelLayout.createSequentialGroup()
-                .addGap(4, 4, 4)
-                .addGroup(ResoultsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(ResoultsPanelLayout.createSequentialGroup()
-                        .addComponent(FSWinnerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(20, 20, 20)
-                        .addComponent(ValueFSWinnerLabel))
-                    .addGroup(ResoultsPanelLayout.createSequentialGroup()
-                        .addComponent(FLDWinnerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(20, 20, 20)
-                        .addComponent(ValueFLDWinnerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                ResoultsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(ResoultsPanelLayout.createSequentialGroup()
+                                .addGap(4, 4, 4)
+                                .addGroup(ResoultsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(ResoultsPanelLayout.createSequentialGroup()
+                                                .addComponent(FSWinnerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(20, 20, 20)
+                                                .addComponent(ValueFSWinnerLabel))
+                                        .addGroup(ResoultsPanelLayout.createSequentialGroup()
+                                                .addComponent(FLDWinnerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(20, 20, 20)
+                                                .addComponent(ValueFLDWinnerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
         ResoultsPanelLayout.setVerticalGroup(
-            ResoultsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ResoultsPanelLayout.createSequentialGroup()
-                .addGap(14, 14, 14)
-                .addGroup(ResoultsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(FSWinnerLabel)
-                    .addComponent(ValueFSWinnerLabel))
-                .addGap(16, 16, 16)
-                .addGroup(ResoultsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(FLDWinnerLabel)
-                    .addComponent(ValueFLDWinnerLabel)))
+                ResoultsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(ResoultsPanelLayout.createSequentialGroup()
+                                .addGap(14, 14, 14)
+                                .addGroup(ResoultsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(FSWinnerLabel)
+                                        .addComponent(ValueFSWinnerLabel))
+                                .addGap(16, 16, 16)
+                                .addGroup(ResoultsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(FLDWinnerLabel)
+                                        .addComponent(ValueFLDWinnerLabel)))
         );
 
         ValuesResoultsPanel.setBackground(new java.awt.Color(255, 255, 255));
@@ -338,12 +319,12 @@ public class PR_GUI extends javax.swing.JFrame {
         javax.swing.GroupLayout ValuesResoultsPanelLayout = new javax.swing.GroupLayout(ValuesResoultsPanel);
         ValuesResoultsPanel.setLayout(ValuesResoultsPanelLayout);
         ValuesResoultsPanelLayout.setHorizontalGroup(
-            ValuesResoultsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 156, Short.MAX_VALUE)
+                ValuesResoultsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 156, Short.MAX_VALUE)
         );
         ValuesResoultsPanelLayout.setVerticalGroup(
-            ValuesResoultsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 126, Short.MAX_VALUE)
+                ValuesResoultsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 126, Short.MAX_VALUE)
         );
 
         ClassifierPanel.setBackground(new java.awt.Color(204, 255, 204));
@@ -354,14 +335,10 @@ public class PR_GUI extends javax.swing.JFrame {
 
         MethodLabel.setText("Method");
 
-        MethodComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Nearest neighbor (NN)", "Nearest Mean (NM)", "k-Nearest Neighbor (k-NN)", "k-Nearest Mean (k-NM)" }));
+        MethodComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"Nearest neighbor (NN)", "Nearest Mean (NM)", "k-Nearest Neighbor (k-NN)", "k-Nearest Mean (k-NM)"}));
 
         TrainButton.setText("Train");
-        TrainButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                TrainButtonActionPerformed(evt);
-            }
-        });
+        TrainButton.addActionListener(evt -> TrainButtonActionPerformed(evt));
 
         ExecuteButton.setText("Execute");
 
@@ -371,109 +348,105 @@ public class PR_GUI extends javax.swing.JFrame {
 
         PercentLabel.setText("%");
 
-        ResultTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ResultTextFieldActionPerformed(evt);
-            }
-        });
+        ResultTextField.addActionListener(evt -> ResultTextFieldActionPerformed(evt));
 
         javax.swing.GroupLayout ClassifierPanelLayout = new javax.swing.GroupLayout(ClassifierPanel);
         ClassifierPanel.setLayout(ClassifierPanelLayout);
         ClassifierPanelLayout.setHorizontalGroup(
-            ClassifierPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ClassifierPanelLayout.createSequentialGroup()
-                .addGap(22, 22, 22)
-                .addComponent(ResultTextField)
-                .addContainerGap())
-            .addGroup(ClassifierPanelLayout.createSequentialGroup()
-                .addGroup(ClassifierPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(ClassifierPanelLayout.createSequentialGroup()
-                        .addGap(8, 8, 8)
-                        .addComponent(ClassifierLabel))
-                    .addGroup(ClassifierPanelLayout.createSequentialGroup()
-                        .addGap(38, 38, 38)
-                        .addComponent(TrainButton, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(72, 72, 72)
-                        .addComponent(ExecuteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(ClassifierPanelLayout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(TrainingLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(10, 10, 10)
-                        .addComponent(TrainSetSizeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(10, 10, 10)
-                        .addComponent(PercentLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(ClassifierPanelLayout.createSequentialGroup()
-                        .addGap(12, 12, 12)
-                        .addComponent(MethodLabel)
-                        .addGap(24, 24, 24)
-                        .addComponent(MethodComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(0, 0, Short.MAX_VALUE))
+                ClassifierPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(ClassifierPanelLayout.createSequentialGroup()
+                                .addGap(22, 22, 22)
+                                .addComponent(ResultTextField)
+                                .addContainerGap())
+                        .addGroup(ClassifierPanelLayout.createSequentialGroup()
+                                .addGroup(ClassifierPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(ClassifierPanelLayout.createSequentialGroup()
+                                                .addGap(8, 8, 8)
+                                                .addComponent(ClassifierLabel))
+                                        .addGroup(ClassifierPanelLayout.createSequentialGroup()
+                                                .addGap(38, 38, 38)
+                                                .addComponent(TrainButton, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(72, 72, 72)
+                                                .addComponent(ExecuteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(ClassifierPanelLayout.createSequentialGroup()
+                                                .addGap(18, 18, 18)
+                                                .addComponent(TrainingLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(10, 10, 10)
+                                                .addComponent(TrainSetSizeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(10, 10, 10)
+                                                .addComponent(PercentLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(ClassifierPanelLayout.createSequentialGroup()
+                                                .addGap(12, 12, 12)
+                                                .addComponent(MethodLabel)
+                                                .addGap(24, 24, 24)
+                                                .addComponent(MethodComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(0, 0, Short.MAX_VALUE))
         );
         ClassifierPanelLayout.setVerticalGroup(
-            ClassifierPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ClassifierPanelLayout.createSequentialGroup()
-                .addComponent(ClassifierLabel)
-                .addGap(15, 15, 15)
-                .addGroup(ClassifierPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(ClassifierPanelLayout.createSequentialGroup()
-                        .addGap(3, 3, 3)
-                        .addComponent(MethodLabel))
-                    .addComponent(MethodComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ResultTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(ClassifierPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(TrainButton)
-                    .addComponent(ExecuteButton))
-                .addGap(17, 17, 17)
-                .addGroup(ClassifierPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(TrainingLabel)
-                    .addComponent(TrainSetSizeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(PercentLabel)))
+                ClassifierPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(ClassifierPanelLayout.createSequentialGroup()
+                                .addComponent(ClassifierLabel)
+                                .addGap(15, 15, 15)
+                                .addGroup(ClassifierPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(ClassifierPanelLayout.createSequentialGroup()
+                                                .addGap(3, 3, 3)
+                                                .addComponent(MethodLabel))
+                                        .addComponent(MethodComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(ResultTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(ClassifierPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(TrainButton)
+                                        .addComponent(ExecuteButton))
+                                .addGap(17, 17, 17)
+                                .addGroup(ClassifierPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(TrainingLabel)
+                                        .addComponent(TrainSetSizeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(PercentLabel)))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
                                 .addGap(10, 10, 10)
-                                .addComponent(ReadDatasetButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(40, 40, 40)
-                                .addComponent(ParseDatasetButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(InfoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(10, 10, 10)
-                        .addComponent(ResoultsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(30, 30, 30)
-                        .addComponent(ValuesResoultsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(FeatureSpacePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(10, 10, 10)
-                        .addComponent(ClassifierPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addGroup(layout.createSequentialGroup()
+                                                                .addGap(10, 10, 10)
+                                                                .addComponent(ReadDatasetButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addGap(40, 40, 40)
+                                                                .addComponent(ParseDatasetButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                        .addComponent(InfoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addGap(10, 10, 10)
+                                                .addComponent(ResoultsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(30, 30, 30)
+                                                .addComponent(ValuesResoultsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addComponent(FeatureSpacePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(10, 10, 10)
+                                                .addComponent(ClassifierPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(ReadDatasetButton)
-                            .addComponent(ParseDatasetButton))
-                        .addGap(17, 17, 17)
-                        .addComponent(InfoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(ResoultsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(ValuesResoultsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(FeatureSpacePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(ClassifierPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addGap(10, 10, 10)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(ReadDatasetButton)
+                                                        .addComponent(ParseDatasetButton))
+                                                .addGap(17, 17, 17)
+                                                .addComponent(InfoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(ResoultsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(ValuesResoultsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(FeatureSpacePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addGap(10, 10, 10)
+                                                .addComponent(ClassifierPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
 
         pack();
@@ -635,7 +608,7 @@ public class PR_GUI extends javax.swing.JFrame {
                     }
                 }
                 ValueDatasetNameLabel.setText(jfc.getSelectedFile().getName());
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
         return s_out;
@@ -702,8 +675,8 @@ public class PR_GUI extends javax.swing.JFrame {
         // having determined array size and class labels, fills in the feature matrix
         int n = 0;
         String saux, stmp = InData;
-        for (int i = 0; i < SampleCount.length; i++) {
-            n += SampleCount[i];
+        for (int aSampleCount : SampleCount) {
+            n += aSampleCount;
         }
         if (n <= 0) {
             throw new Exception("no samples found");
@@ -719,62 +692,52 @@ public class PR_GUI extends javax.swing.JFrame {
             F[FeatureCount - 1][j] = Double.parseDouble(saux);
             stmp = stmp.substring(stmp.indexOf('$') + 1);
         }
-        int cc = 1;
+        //int cc = 1;
     }
 
     private String selectFeaturesSFS(int[] flags, int d) {
         //step 1
         int max[] = new int[d];
-        max[0] = selectFeatures(flags, 1);
-        String out = "";
-        int max1, max_ind = 0;
-        //out += String.valueOf(max);
-        //step 2..n
         double G[][] = new double[d][];
+        String out = "";
+        //step 2..n
+        max[0] = selectFeatures(flags, 1);
         G[0] = F[max[0]];
         for (int j = 1; j < d; j++) {
-            double tmpG[][] = new double[j][];
-            for(int x = 0; x < j;x++){
-                tmpG[x] = G[x];
-            }
             double FLD = 0, tmp;
-            int max_ind2 = -1;
-            //tmpG[j-1] = F[max[j-1]];
+            double tmpG[][] = new double[j + 1][];
+
+            System.arraycopy(G, 0, tmpG, 0, j);
+
             for (int i = 0; i < FeatureCount; i++) {
                 final int finalI = i;
-                if (!IntStream.of(max).anyMatch(x->x == finalI)) {
+                if (!IntStream.of(max).anyMatch(x -> x == finalI)) {
                     tmpG[j] = F[i];
                     tmp = computeFisherMD(tmpG);
                     if (tmp > FLD) {
                         FLD = tmp;
                         max[j] = i;
-//                        max_ind = i;
-//                        max_ind2 = j;
                     }
                 }
             }
             G[j] = F[max[j]];
         }
 
-        int max_ind2[];
-        max_ind2 = new int[FeatureCount];
-
         FNew = new double[d][];
         for (int j = 0; j < d; j++) {
-            FNew[j] = F[max_ind2[j]];
+            FNew[j] = F[max[j]];
         }
 
-        for(int tmp: max){
+        for (int tmp : max) {
             out += tmp + " ";
         }
         return out;
     }
 
     private int selectFeatures(int[] flags, int d) {
-        int max_ind = -1;
-        int[] id=new int [d];
+        int[] id = new int[d];
         if (d == 1) {
-            max_ind = Fisher1D(max_ind);
+            id[0] = Fisher1D(id[0]);
         } else {
             double FLD = 0, tmp;
             Map<Double, String> map;
@@ -784,30 +747,25 @@ public class PR_GUI extends javax.swing.JFrame {
             //k = 2
             for (ICombinatoricsVector<Integer> combination : vector) {
                 double[][] G = new double[d][];
-
-                for(int i=0;i< combination.getSize();i++){
-
+                for (int i = 0; i < combination.getSize(); i++) {
                     G[i] = F[combination.getValue(i)];
                     id[i] = combination.getValue(i);
-//                    System.out.print(combination.getValue(i));
                 }
                 tmp = computeFisherMD(G);
-                //System.out.print(" " + combination.getValue(i));
                 map.put(tmp, idToString(id));
                 if (tmp > FLD) {
                     FLD = tmp;
 //                    max_ind = ;
                     System.out.println("NADPISANIE: " + tmp + " " + idToString(id));
                 }
-
             }
 
             Map<Double, String> map1 = new TreeMap<>(map);
             Set set2 = map1.entrySet();
             for (Object aSet2 : set2) {
                 Map.Entry me2 = (Map.Entry) aSet2;
-                    System.out.print(me2.getKey() + ": ");
-                   System.out.println(me2.getValue());
+                System.out.print(me2.getKey() + ": ");
+                System.out.println(me2.getValue());
             }
         }
         int max_ind2[];
@@ -817,13 +775,13 @@ public class PR_GUI extends javax.swing.JFrame {
         for (int j = 0; j < d; j++) {
             FNew[j] = F[max_ind2[j]];
         }
-        return max_ind;
+        return id[0];
     }
 
 
-    private String idToString(int[] id){
+    private String idToString(int[] id) {
         String str = "";
-        for(int i : id){
+        for (int i : id) {
             str += i + " ";
         }
         return str;
@@ -851,7 +809,7 @@ public class PR_GUI extends javax.swing.JFrame {
                 A = new double[vec.length][SampleCount[0]],
                 B = new double[vec.length][SampleCount[1]];
 
-        for (int a = 0; a < vec.length; a++){
+        for (int a = 0; a < vec.length; a++) {
             mA[a] = 0;
             mB[a] = 0;
             indexA = 0;
@@ -887,9 +845,9 @@ public class PR_GUI extends javax.swing.JFrame {
         return Math.abs((Math.sqrt(result)) / (Data.computeCovarianceMatrix(B).det() + Data.computeCovarianceMatrix(A).det()));
     }
 
-    private Generator<Integer> count_combinations(int n){
+    private Generator<Integer> count_combinations(int n) {
         Vector<Integer> vector = new Vector<>(); //Diamonds are allowed in 7+
-        for(int i= 0; i < 64;i++){
+        for (int i = 0; i < 64; i++) {
             vector.add(i);
         }
         ICombinatoricsVector<Integer> initialVector = Factory.createVector(vector);
