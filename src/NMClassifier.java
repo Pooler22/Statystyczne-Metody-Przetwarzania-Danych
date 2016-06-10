@@ -20,21 +20,22 @@ class NMClassifier extends NNClassifier {
         return super.execute();
     }
     void mean() {
-        mA = new double[TrainingSet[0].length];
-        mB = new double[TrainingSet[0].length];
+        mA = new double[TrainingSet.length];
+        mB = new double[TrainingSet.length];
         int countA = 0, countB = 0;
 
-        for (int i = 0; i < TrainingSet[0].length; i++) {
+        for (int i = 0; i < TrainingSet.length; i++) {
             mA[i] = mB[i] = 0;
         }
-        for (int j = 0; j < TrainingSet[0].length; j++) {
+
+        for (int j = 0; j < TrainingSet.length; j++) {
             countA = countB = 0;
-            for (double ts : TrainingSet[j]) {
-                if (ClassLabels[(int) ts] == 0) {
-                    mA[j] += dataSet[(int)ts][j];
+            for (int k = 0; k < dataSet[j].length; k++) {
+                if (ClassLabels[(int)TrainingSet[j][k]] == 0) {
+                    mA[j] += dataSet[j][k];
                     countA++;
                 } else {
-                    mB[j] += dataSet[(int)ts][j];
+                    mB[j] += dataSet[j][k];
                     countB++;
                 }
             }

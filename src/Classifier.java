@@ -43,17 +43,21 @@ abstract class Classifier {
         
         TrainingSet = new double[Dataset[0].length][TrainCount];
         TestSet = new double[Dataset[0].length][TestCount];
+        // label vectors for training/test sets
         TrainCount = 0;
         TestCount = 0;
-        // label vectors for training/test sets
         for (int i = 0; i < Index.length; i++) {
-            for (int j = 0; j < this.dataSet[0].length; j++) {
+
                 if (Index[i] == TRAIN_SET) {
-                    TrainingSet[TrainCount++][j] = i;
+                    for (int j = 0; j < this.dataSet[0].length; j++) {
+                        TrainingSet[j][TrainCount++] = i;
+                    }
                 } else {
-                    TestSet[TestCount++][j] = i;
+                    for (int j = 0; j < this.dataSet[0].length; j++) {
+                        TestSet[j][TestCount++] = i;
+                    }
                 }
-            }
+
         }
     }
     
