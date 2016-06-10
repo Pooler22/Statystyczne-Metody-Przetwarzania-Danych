@@ -740,9 +740,10 @@ public class PR_GUI extends javax.swing.JFrame {
     private int[] selectFeatures(int[] flags, int d) {
         int[] id = new int[d];
         int[] max_id = new int[d];
+        int[] numbers = new int[d];
         String last = "";
         if (d == 1) {
-            id[0] = Fisher1D(id[0]);
+            numbers[0] = id[0] = Fisher1D(id[0]);
         } else {
             double FLD = 0, tmp;
             Map<Double, String> map;
@@ -761,7 +762,7 @@ public class PR_GUI extends javax.swing.JFrame {
                 if (tmp > FLD) {
                     FLD = tmp;
                     //max_id  = id  ;
-                    System.out.println("NADPISANIE: " + tmp + " " + idToString(id));
+                    //System.out.println("NADPISANIE: " + tmp + " " + idToString(id));
                 }
             }
 
@@ -770,16 +771,25 @@ public class PR_GUI extends javax.swing.JFrame {
             for (Object aSet2 : set2) {
                 Map.Entry me2 = (Map.Entry) aSet2;
                 //System.out.print(me2.getKey() + ": ");
-                System.out.println(me2.getValue());
+                //System.out.println(me2.getValue());
                 last = me2.getValue().toString();
 
             }
 
         }
         System.out.println(last);
-        updateFNew(d, max_id);
 
-        return max_id;
+
+
+        if(d!=1){
+            numbers= Arrays.asList(last.split(" "))
+                    .stream()
+                    .map(String::trim)
+                    .mapToInt(Integer::parseInt).toArray();
+        }
+        updateFNew(d, numbers);
+
+        return numbers;
     }
 
     private void updateFNew(int d, int[] id) {
