@@ -29,6 +29,7 @@ abstract class Classifier {
         this.dataSet = (new Matrix(Dataset)).transpose().getArray();
 
         int[] Index = new int[Dataset[0].length];
+
         double Th = Double.parseDouble(TrainSetSize) / 100.0;
         int TrainCount = 0, TestCount = 0;
         for (int i = 0; i < Dataset[0].length; i++) {
@@ -40,26 +41,36 @@ abstract class Classifier {
                 TestCount++;
             }
         }
-        
-        TrainingSet = new double[Dataset[0].length][TrainCount];
-        TestSet = new double[Dataset[0].length][TestCount];
+
+
+        int featuresCount = Dataset.length;
+        TrainingSet = new double[featuresCount][TrainCount];
+        TestSet = new double[featuresCount][TestCount];
         // label vectors for training/test sets
         TrainCount = 0;
         TestCount = 0;
+        int column=0;
         for (int i = 0; i < Index.length; i++) {
 
-                if (Index[i] == TRAIN_SET) {
-                    for (int j = 0; j < this.dataSet[0].length; j++) {
-                        TrainingSet[j][TrainCount++] = i;
-                    }
-                } else {
-                    for (int j = 0; j < this.dataSet[0].length; j++) {
-                        TestSet[j][TestCount++] = i;
-                    }
+            if (Index[i] == TRAIN_SET) {
+
+                for (int j = 0; j < featuresCount; j++) {
+                    TrainingSet[j][TrainCount] = Dataset[j][column];
                 }
+                TrainCount++;
+                column++;
+
+            } else {
+
+                for (int j = 0; j < featuresCount; j++) {
+                    TestSet[j][TestCount] = Dataset[j][column];
+                }
+                TestCount++;
+                column++;
+            }
 
         }
     }
-    
+
     abstract double execute();
 }
