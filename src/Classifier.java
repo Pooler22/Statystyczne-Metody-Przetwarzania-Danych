@@ -15,6 +15,7 @@ abstract class Classifier {
     int[] ClassLabels;
     final int TRAIN_SET = 0, TEST_SET = 1;
     int[] classMarks;
+    int trainCountA, trainCountB;
 
     int[] Count;
     double[][] dataSet;

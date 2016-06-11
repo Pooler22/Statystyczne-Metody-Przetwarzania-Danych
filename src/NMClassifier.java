@@ -16,31 +16,46 @@ class NMClassifier extends NNClassifier {
 
     @Override
     double execute() {
-        mean();
-        return super.execute();
+        double distances[];
+        int match =0;
+        computeMean(TrainingSet);
+        for(int i=0; i<TestSet.length; i++) {
+            distances = distance(dataSet[TestSet[i][0]]);
+            if(distances[0] < distances[1]){
+                if(ClassLabels[TestSet[i][0]] == 0)
+                    match++;
+            } else {
+                if(ClassLabels[TestSet[i][0]] == 1)
+                    match++;
+            }
+        }
+        double result = 100.0 * match/TestSet.length;
+        return result;
     }
-    void mean() {
-        mA = new double[TrainingSet.length];
-        mB = new double[TrainingSet.length];
-        int countA = 0, countB = 0;
-
-        for (int i = 0; i < TrainingSet.length; i++) {
+    void computeMean(int[][] trainSet){
+        mA = new double[trainSet[0].length];
+        mB = new double[trainSet[0].length];
+        int countA = 0;
+        int countB = 0;
+        for (int i=0; i<mA.length; i++){
             mA[i] = mB[i] = 0;
         }
-
-        for (int j = 0; j < TrainingSet.length; j++) {
-            countA = countB = 0;
-            for (int k = 0; k < dataSet[j].length; k++) {
-                if (ClassLabels[(int)TrainingSet[j][k]] == 0) {
-                    mA[j] += dataSet[j][k];
+        for (int j=0; j<mA.length; j++){
+            countA = countB=0;
+            for (int i=0; i<trainSet.length; i++){
+                if(ClassLabels[trainSet[i][j]]==0){
+                    mA[j] += dataSet[trainSet[i][j]][j];
                     countA++;
-                } else {
-                    mB[j] += dataSet[j][k];
+                }
+                else{
+                    mB[j] += dataSet[trainSet[i][j]][j];
                     countB++;
                 }
             }
         }
-        for (int i = 0; i < mA.length; i++) {
+        trainCountA = countA;
+        trainCountB = countB;
+        for (int i=0; i<mA.length; i++){
             mA[i] /= countA;
             mB[i] /= countB;
         }
