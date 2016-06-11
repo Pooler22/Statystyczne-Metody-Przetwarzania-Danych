@@ -10,8 +10,8 @@
  */
 class NMClassifier extends NNClassifier {
     
-    public NMClassifier(int[] ClassLabels, int[] SampleCount) {
-        super(ClassLabels, SampleCount);
+    public NMClassifier(double[][] FNew,int[] ClassLabels, int[] SampleCount) {
+        super(FNew, ClassLabels, SampleCount);
     }
 
     @Override

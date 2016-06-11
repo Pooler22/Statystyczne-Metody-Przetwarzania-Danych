@@ -14,18 +14,19 @@ import java.util.List;
  */
 class NNClassifier extends Classifier {
 
-    public NNClassifier(int[] ClassLabels, int[] SampleCount) {
-        super(ClassLabels, SampleCount);
+    public NNClassifier(double[][] FNew, int[] ClassLabels, int[] SampleCount) {
+        super(FNew, ClassLabels, SampleCount);
     }
 
-
+    //do klasyfikacji
     @Override
     double execute() {
         int match = 0;
         final double percent = 100;
-        double distances[];
-        
-        for(double[] i : TestSet) {
+        double distances[] = new double[10];
+
+        //for po wszystkich elementach zbioru testowego
+        for(int[] i : TestSet) {
             distances = distance(dataSet[(int)i[0]]);
             if(distances[0] < distances[1]){
                 if(ClassLabels[(int)i[0]] == 0)
@@ -37,7 +38,10 @@ class NNClassifier extends Classifier {
         }
         return percent * match/TestSet.length;
     }
-    
+
+    //funkcja liczy odleglosc miedzy parametrem wejsciowy - elementem zbioru testowego, a wszystkimi kolejnymi elementami
+    // zbioru treningowego, o czym swiadczy for ponizej
+    //zaleznie od classlabels rozpoznana zostaje klasa, zwracana jest odleglosc od klasy A i od klasy Q
     private double[] distance(double[] point) {
         List<Double> distanceA,distanceB; 
         double[] result;
@@ -45,12 +49,11 @@ class NNClassifier extends Classifier {
         result = new double[2];        
         distanceA = new ArrayList<>();
         distanceB = new ArrayList<>();
-        
-        for (double[] i : TrainingSet) {
-            if (ClassLabels[(int) i[0]] == 0) {
-                distanceA.add(euclidean(point,i));
+        for(int i=0; i<TrainingSet.length; i++){
+            if(ClassLabels[TrainingSet[i][0]]==0){
+                distanceA.add(euclidean(point,TrainingSet[i]));
             } else {
-                distanceB.add(euclidean(point,i));
+                distanceB.add(euclidean(point,TrainingSet[i]));
             }
         }
         result[0] = Collections.min(distanceA);
@@ -58,7 +61,7 @@ class NNClassifier extends Classifier {
         return result;
     }
     
-    double euclidean(double[] point, double[] i) {
+    double euclidean(double[] point, int[] i) {
         double sum = 0;
         for (int j = 0; j < point.length; j++) {
             sum += Math.pow(dataSet[(int) i[0]][j] - point[j], 2);

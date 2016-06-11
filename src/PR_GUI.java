@@ -530,12 +530,12 @@ public class PR_GUI extends javax.swing.JFrame {
         String selectedItem = (String) MethodComboBox.getSelectedItem();
         Classifier Cl;
         if (selectedItem.equals("Nearest neighbor (NN)")) {
-            Cl = new NNClassifier(ClassLabels, SampleCount);
+            Cl = new NNClassifier(FNew, ClassLabels, SampleCount);
         } else {// if (selectedItem.equals("Nearest Mean (NM)")) {
-            Cl = new NMClassifier(ClassLabels, SampleCount);
+            Cl = new NMClassifier(FNew,ClassLabels, SampleCount);
         }
 
-        Cl.generateTrainingAndTestSets(FNew, TrainSetSizeTextField.getText());
+        Cl.generateTrainingAndTestSets(TrainSetSizeTextField.getText());
         ResultTextField.setText(Double.toString(Cl.execute()));
 
     }//GEN-LAST:event_TrainButtonActionPerformed

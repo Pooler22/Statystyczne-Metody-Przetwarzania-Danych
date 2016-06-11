@@ -11,90 +11,58 @@ import Jama.Matrix;
  */
 abstract class Classifier {
 
-    double[][] TrainingSet, TestSet;
+    int[][] TrainingSet, TestSet;
     int[] ClassLabels;
     final int TRAIN_SET = 0, TEST_SET = 1;
+    int[] classMarks;
 
     int[] Count;
     double[][] dataSet;
     double[] mA, mB;
 
-    public Classifier(int[] ClassLabels, int[] SampleCount) {
+    public Classifier(double[][] FNew, int[] ClassLabels, int[] SampleCount) {
+        Matrix temp = new Matrix(FNew);
+        this.dataSet = temp.transpose().getArray();
         this.ClassLabels = ClassLabels;
         this.Count = SampleCount;
     }
 
-    void generateTrainingAndTestSets(double[][] Dataset, String TrainSetSize) {
-        this.dataSet = (new Matrix(Dataset)).transpose().getArray();
-
-        int[] Index = new int[Dataset[0].length];
-
-        double Th = Double.parseDouble(TrainSetSize) / 100.0;
-        int TrainCount = 0, TestCount = 0;
-        for (int i = 0; i < Dataset[0].length; i++) {
-            if (Math.random() <= Th) {
-                Index[i] = TRAIN_SET;
+    void generateTrainingAndTestSets(String TrainSetSize) {
+        //dataSet = Dataset;
+        int[] Index = new int[dataSet.length];
+        double Th = Double.parseDouble(TrainSetSize)/100.0;
+        int TrainCount=0, TestCount=0;
+        //for ponizej zliczba wielkosc zbioru treningowego i tesotwego oraz zapisuje w Index kolejno wartosci 0 lub 1 w
+        // zaleznosci do ktorego zbioru nalezy element
+        for(int i=0; i<dataSet.length; i++)
+            if(Math.random()<=Th) {
+                Index[i]=TRAIN_SET;
                 TrainCount++;
-            } else {
-                Index[i] = TEST_SET;
+            }
+            else {
+                Index[i]=TEST_SET;
                 TestCount++;
             }
-        }
-
-
-        int featuresCount = Dataset.length;
-        int allprobes = Dataset[0].length;
-        //dodaje 1 do wiersza bo dojda oznaczenia
-        TrainingSet = new double[featuresCount+1][TrainCount];
-        TestSet = new double[featuresCount+1][TestCount];
-        // label vectors for training/test sets
-
-
-        //tutaj sobie zobacz jak wyglada Dataset :)
-        double var1 = Dataset[0][0];
-        double var2 = Dataset[0][1];
-        double var3 = Dataset[0][2];
-        double var4 = Dataset[0][3];
-
-        double var0 = Dataset[1][0];
-        double var6 = Dataset[1][1];
-        double var7 = Dataset[1][2];
-        double var8 = Dataset[1][3];
-
-        int marker = 0;
-        //Dodawanie oznaczen dla klas
-
-        //featuresCount tutaj dodaje 1 zeby zmeisil sie oznacznik dla klasy
-        double[][] Dataset_with_marks = new double[featuresCount+1][Dataset[0].length];
-
-        for(int i =0 ; i<Dataset[0].length;i++){
-            Dataset_with_marks[0][i]=(double)ClassLabels[i];
-            for(int j=1;j<featuresCount+1;j++){
-                Dataset_with_marks[j][i]=Dataset[j-1][i];
-            }
-        }
-        TrainCount = 0;
-        TestCount = 0;
-        int column=0;
-        for (int i = 0; i < Index.length; i++) {
-
-            if (Index[i] == TRAIN_SET) {
-
-                for (int j = 0; j < featuresCount+1; j++) {
-                    TrainingSet[j][TrainCount] = Dataset_with_marks[j][column];
+        TrainingSet = new int[TrainCount][dataSet[0].length];
+        TestSet = new int[TestCount][dataSet[0].length];
+        TrainCount=0;
+        TestCount=0;
+        // for po Indexie i kolejny po ilosci wybranych wymiarow k, w tym forze przypisuje sie wartosci zaleznie do
+        // TrainingSet lub TestSet gdzie i jes numerem indezu z tablicy Index
+        for(int i=0; i<Index.length; i++){
+            for (int j=0; j <dataSet[0].length; j++){
+                if(Index[i]==TRAIN_SET){
+                    TrainingSet[TrainCount][j] = i;
+                    //TrainCount++;
                 }
+                else
+                    TestSet[TestCount][j] = i;
+                    //TestCount++;
+            }
+            if(Index[i]==TRAIN_SET){
                 TrainCount++;
-                column++;
-
-            } else {
-
-                for (int j = 0; j < featuresCount+1; j++) {
-                    TestSet[j][TestCount] = Dataset_with_marks[j][column];
-                }
+            } else
                 TestCount++;
-                column++;
-            }
-
         }
     }
 
