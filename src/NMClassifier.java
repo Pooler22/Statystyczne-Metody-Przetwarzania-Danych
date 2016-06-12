@@ -5,78 +5,81 @@
  */
 
 /**
- *
  * @author pooler
  */
 class NMClassifier extends NNClassifier {
-    
-    public NMClassifier(double[][] FNew,int[] ClassLabels, int[] SampleCount) {
+
+    private double[] mA, mB;
+
+    NMClassifier(double[][] FNew, int[] ClassLabels, int[] SampleCount) {
         super(FNew, ClassLabels, SampleCount);
     }
 
     @Override
     double execute() {
+        int match = 0;
         double distances[];
-        int match =0;
+
         computeMean(TrainingSet);
-        for(int i=0; i<TestSet.length; i++) {
-            distances = distance(dataSet[TestSet[i][0]]);
-            if(distances[0] < distances[1]){
-                if(ClassLabels[TestSet[i][0]] == 0)
+
+        for (int[] elementTestSet : TestSet) {
+            distances = distance(dataSet[elementTestSet[0]]);
+            if (distances[0] < distances[1]) {
+                if (ClassLabels[elementTestSet[0]] == 0) {
                     match++;
+                }
+
             } else {
-                if(ClassLabels[TestSet[i][0]] == 1)
+                if (ClassLabels[elementTestSet[0]] == 1) {
                     match++;
+                }
             }
         }
-        double result = 100.0 * match/TestSet.length;
-        return result;
+
+        return percent * match / TestSet.length;
     }
-    void computeMean(int[][] trainSet){
+
+    private void computeMean(int[][] trainSet) {
         mA = new double[trainSet[0].length];
         mB = new double[trainSet[0].length];
         int countA = 0;
         int countB = 0;
-        for (int i=0; i<mA.length; i++){
+        for (int i = 0; i < mA.length; i++) {
             mA[i] = mB[i] = 0;
         }
-        for (int j=0; j<mA.length; j++){
-            countA = countB=0;
-            for (int i=0; i<trainSet.length; i++){
-                if(ClassLabels[trainSet[i][j]]==0){
-                    mA[j] += dataSet[trainSet[i][j]][j];
+        for (int j = 0; j < mA.length; j++) {
+            countA = countB = 0;
+            for (int[] aTrainSet : trainSet) {
+                if (ClassLabels[aTrainSet[j]] == 0) {
+                    mA[j] += dataSet[aTrainSet[j]][j];
                     countA++;
-                }
-                else{
-                    mB[j] += dataSet[trainSet[i][j]][j];
+                } else {
+                    mB[j] += dataSet[aTrainSet[j]][j];
                     countB++;
                 }
             }
         }
         trainCountA = countA;
         trainCountB = countB;
-        for (int i=0; i<mA.length; i++){
+        for (int i = 0; i < mA.length; i++) {
             mA[i] /= countA;
             mB[i] /= countB;
         }
     }
 
-    private double[] distance(double[] point){
+    private double[] distance(double[] point) {
         double distanceA, distanceB;
         double[] result = new double[2];
-        
+
         distanceA = distanceB = 0;
-        
-        if (mA.length != point.length)
-            return null;
-        
-        for(int i=0; i<point.length; i++){
-            distanceA += Math.pow(mA[i]-point[i], 2);
-            distanceB += Math.pow(mB[i]-point[i], 2);
+
+        for (int i = 0; i < point.length; i++) {
+            distanceA += Math.pow(mA[i] - point[i], 2);
+            distanceB += Math.pow(mB[i] - point[i], 2);
         }
 
         result[0] = Math.sqrt(distanceA);
         result[1] = Math.sqrt(distanceB);
         return result;
-    }    
+    }
 }
