@@ -1,9 +1,13 @@
 /**
  * Created by pooler.
  */
-public class KNMClassifier extends Classifier{
-    public KNMClassifier(double[][] dataSet, int[] ClassLabels, int[] SampleCount) {
+public class KNMClassifier extends Classifier {
+
+    int k;
+
+    public KNMClassifier(double[][] dataSet, int[] ClassLabels, int[] SampleCount, int k) {
         super(dataSet, ClassLabels, SampleCount);
+        this.k = k;
     }
 
     @Override

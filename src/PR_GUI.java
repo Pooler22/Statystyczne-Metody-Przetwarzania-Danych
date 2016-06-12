@@ -170,7 +170,7 @@ public class PR_GUI extends javax.swing.JFrame {
 
         FSDimensionLabel.setText("FS Dimension");
 
-        FSDimensionComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "3" }));
+        FSDimensionComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"1", "2", "3"}));
 
         CriterionLabel.setText("Criterion");
 
@@ -183,7 +183,7 @@ public class PR_GUI extends javax.swing.JFrame {
             }
         });
 
-        FisherCriterionComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Fisher discriminant", "SFS", "Classification error" }));
+        FisherCriterionComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"Fisher discriminant", "SFS", "Classification error"}));
 
         FeatureExtarctionRadioButton.setBackground(new java.awt.Color(255, 255, 204));
         FeatureExtarctionRadioButton.setText("Feature extraction");
@@ -193,7 +193,7 @@ public class PR_GUI extends javax.swing.JFrame {
             }
         });
 
-        PCALDAComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "PCA", "LDA" }));
+        PCALDAComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"PCA", "LDA"}));
         PCALDAComboBox.setEnabled(false);
 
         EnergyLabel.setText("Energy");
@@ -356,7 +356,7 @@ public class PR_GUI extends javax.swing.JFrame {
 
         MethodLabel.setText("Method");
 
-        MethodComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Nearest neighbor (NN)", "Nearest Mean (NM)", "k-Nearest Neighbor (k-NN)", "k-Nearest Mean (k-NM)" }));
+        MethodComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"Nearest neighbor (NN)", "Nearest Mean (NM)", "k-Nearest Neighbor (k-NN)", "k-Nearest Mean (k-NM)"}));
 
         TrainButton.setText("Train");
         TrainButton.addActionListener(new java.awt.event.ActionListener() {
@@ -534,7 +534,7 @@ public class PR_GUI extends javax.swing.JFrame {
             } else {
                 int[] a = selectFeatures(flags, tmp);
                 String out = "";
-                for(int i : a){
+                for (int i : a) {
                     out += i + " ";
                 }
                 ValueFSWinnerLabel.setText(out);
@@ -825,9 +825,8 @@ public class PR_GUI extends javax.swing.JFrame {
         System.out.println(last);
 
 
-
-        if(d!=1){
-            numbers= Arrays.asList(last.split(" "))
+        if (d != 1) {
+            numbers = Arrays.asList(last.split(" "))
                     .stream()
                     .map(String::trim)
                     .mapToInt(Integer::parseInt).toArray();
