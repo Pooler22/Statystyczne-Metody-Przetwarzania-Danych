@@ -1,0 +1,6 @@
+Acer Campestre,1,2,5,4
+Acer Campestre,20,2,6,4
+Acer Campestre,1,8,9,0
+Quercus Afares,2,1,7,5
+Quercus Afares,2,3,8,5
+Quercus Afares,5,6,7,9
