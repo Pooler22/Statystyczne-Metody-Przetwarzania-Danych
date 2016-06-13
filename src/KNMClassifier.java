@@ -13,7 +13,7 @@ public class KNMClassifier extends Classifier {
     double[][] macierz_z_probkami_B;
 
     public KNMClassifier(double[][] dataSet, int[] ClassLabels, int[] SampleCount, int k) {
-        super(dataSet, ClassLabels, SampleCount);
+        super(dataSet, ClassLabels);
         this.k = k;
     }
 
