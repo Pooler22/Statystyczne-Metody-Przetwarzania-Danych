@@ -19,11 +19,10 @@ public class KNMClassifier extends Classifier {
 
     @Override
     double execute() {
-
         int match = 0;
         double distances[];
 
-        computeMean(TrainingSet);
+
         //TestSet
 //        for (int[] elementTestSet : TestSet) {
 //            //distances = distance(dataSet[elementTestSet[0]]);
@@ -41,10 +40,10 @@ public class KNMClassifier extends Classifier {
 
        // return percent * match / TestSet.length;
 
-        return 0.0;
+        return computeMean(TrainingSet);
     }
 
-    private void computeMean(int[][] trainSet) {
+    private double computeMean(int[][] trainSet) {
         mA = new double[trainSet[0].length];
         mB = new double[trainSet[0].length];
         int countA = 0;
@@ -121,24 +120,30 @@ public class KNMClassifier extends Classifier {
             }
         }
 
+        double[][] xAminusA = new double[countA][mA.length];
+        double[][] xAminusQ = new double[countA][mA.length];
+        double[][] xQminusQ = new double[countB][mA.length];
+        double[][] xQminusA = new double[countB][mA.length];
 
         for (int kolumny = 0; kolumny < countA; kolumny++) {
             for (int wiersz = 0; wiersz < mA.length; wiersz++) {
-                xA[wiersz][kolumny] = xA[wiersz][kolumny] - mA[wiersz];
+                xAminusA[kolumny][wiersz] = xA[wiersz][kolumny] - mA[wiersz];
+                xAminusQ[kolumny][wiersz] = xA[wiersz][kolumny] - mB[wiersz];
             }
         }
         for (int kolumny = 0; kolumny < countB; kolumny++) {
             for (int wiersz = 0; wiersz < mA.length; wiersz++) {
-                xQ[wiersz][kolumny] = xQ[wiersz][kolumny] - mB[wiersz];
+                xQminusQ[kolumny][wiersz] = xQ[wiersz][kolumny] - mB[wiersz];
+                xQminusA[kolumny][wiersz] = xQ[wiersz][kolumny] - mA[wiersz];
             }
         }
         int colCovA = CovA.getColumnDimension();
         int rowCovA = CovA.getRowDimension();
         int colCovQ = CovB.getColumnDimension();
         int rowCovQ = CovB.getRowDimension();
-
-        Matrix iCovA = new Matrix(1,1);
-        Matrix iCovQ = new Matrix(1,1);
+        int match = 0;
+        Matrix iCovA = new Matrix(colCovA,colCovA);
+        Matrix iCovQ = new Matrix(colCovQ,colCovQ);
         if ((colCovA == 1 && rowCovA == 1) || (colCovQ == 1 && rowCovQ == 1)) {
             if(CovA.get(0,0) == 0 || CovB.get(0,0) == 0){
                 System.out.print("nic nie poradze, nie dziel przez 0");
@@ -149,26 +154,40 @@ public class KNMClassifier extends Classifier {
             }
         }
         else{
-            iCovA = CovA.inverse();
-            iCovQ = CovB.inverse();
+            if(CovA.det() == 0){
+                System.out.println("problem w wyznacznikiem = 0");
+                return 0.0;
+            }
+            else{
+                iCovA = CovA.inverse();
+                iCovQ = CovB.inverse();
+            }
         }
 
-        //double test = xA[0][2];
-        for (int i = 0; i < mA.length; i++) {
-            double[][] xA1 = new double[mA.length][countA];
-            double[][] xQ1 = new double[mA.length][countB];
-            for (int j = 0; j < countA; j++) {
-                xA1[i][j] = xA[i][j];
-            }
-            for (int j = 0; j < countB; j++) {
-                xQ1[i][j] = xQ[i][j];
+        int tmp = mA.length;
+
+        for (int i = 0; i < tmp; i++) {
+
+            for (int k = 0; k < countA; k++) {
+                Matrix mA = new Matrix(new double[][]{xAminusA[k]});// new Matrix(xA[i]);
+                Matrix mQ = new Matrix(new double[][]{xAminusQ[k]});
+                double a = sqrt(mA.transpose().times(iCovA).times(mA).get(0, 0));
+                double q = sqrt(mQ.transpose().times(iCovQ).times(mQ).get(0, 0));
+                if(a < q){
+                    match++;
+                }
             }
 
-            Matrix mA = new Matrix(xA1);// new Matrix(xA[i]);
-            Matrix mQ = new Matrix(xQ1);
-            double a = sqrt(mA.transpose().times(CovA).times(mA).get(0, 0));
-            double q = sqrt(mA.transpose().times(CovA).times(mA).get(0, 0));
+            for (int k = 0; k < countB; k++) {
+                Matrix mA2 = new Matrix(new double[][]{xQminusA[k]}); // new Matrix(xA[i]);
+                Matrix mQ2 = new Matrix(new double[][]{xQminusQ[k]});
+                double a2 = sqrt(mA2.transpose().times(iCovA).times(mA2).get(0, 0));
+                double q2 = sqrt(mQ2.transpose().times(iCovQ).times(mQ2).get(0, 0));
+                if(a2 > q2){
+                    match++;
+                }
+            }
         }
+        return percent * match / TestSet.length;
     }
-
 }
