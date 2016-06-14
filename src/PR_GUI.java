@@ -770,6 +770,17 @@ public class PR_GUI extends javax.swing.JFrame {
 
     private void ExecuteButtonActionPerformed2(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExecuteButtonActionPerformed2
         ResultTextField.setText(Double.toString(classifier.execute()));
+        String selectedItem = (String) QualityClassificationComboBox.getSelectedItem();
+
+        switch (selectedItem) {
+            case "Cross-validation":
+                jTextArea1.setText(Double.toString(classifier.crossValidation()));
+
+                break;
+            case "Bootstrap":
+                jTextArea1.setText(Double.toString(classifier.bootstrap()));
+                break;
+        }
     }//GEN-LAST:event_ExecuteButtonActionPerformed2
 
     /**
