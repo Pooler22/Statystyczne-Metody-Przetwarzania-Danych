@@ -14,6 +14,7 @@ import java.util.List;
 class Data {
 
     String InData; // dataset from a text file will be placed here
+    String[] classNames;
     int FeatureCount = 0;
     int[] ClassLabels, SampleCount;
     double[] vec;
@@ -62,7 +63,7 @@ class Data {
             stmp = stmp.substring(stmp.indexOf('$') + 1);
         }
         // based on results of the above analysis, create variables
-        String[] classNames = new String[NameList.size()];
+        classNames = new String[NameList.size()];
         for (int i = 0; i < classNames.length; i++) {
             classNames[i] = NameList.get(i);
         }
