@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -19,12 +20,12 @@ class KNNClassifier extends Classifier {
     double execute() {
         int match = 0;
 
-        for (int[] i : TestSet) {
-            if (shortDistanceToClassA(dataSet[i[0]])) {
-                if (ClassLabels[i[0]] == 0)
+        for (int[] elementTestSet : TestSet) {
+            if (shortDistanceToClassA(dataSet[elementTestSet[0]])) {
+                if (ClassLabels[elementTestSet[0]] == 0)
                     match++;
             } else {
-                if (ClassLabels[i[0]] == 1)
+                if (ClassLabels[elementTestSet[0]] == 1)
                     match++;
             }
         }
@@ -32,12 +33,8 @@ class KNNClassifier extends Classifier {
     }
 
     private boolean shortDistanceToClassA(double[] point) {
-        double[] result;
-        List<Double> distanceA, distanceQ;
-
-        result = new double[2];
-        distanceA = new ArrayList<>();
-        distanceQ = new ArrayList<>();
+        List<Double> distanceA = new ArrayList<>();
+        List<Double> distanceQ = new ArrayList<>();
 
         for (int[] elementTrainingSet : TrainingSet) {
             if (ClassLabels[elementTrainingSet[0]] == TRAIN_SET) {
@@ -68,27 +65,20 @@ class KNNClassifier extends Classifier {
             double_vector_Q_to_compare[i] = double_vector_Q[i];
         }
 
-        int pointer_a = 0;
-        int pointer_q = 0;
+        int countA = 0;
+        int countQ = 0;
 
         for (double aDouble_vector_A_to_compare : double_vector_A_to_compare) {
             for (double aDouble_vector_Q_to_compare : double_vector_Q_to_compare) {
                 if (aDouble_vector_A_to_compare > aDouble_vector_Q_to_compare) {
-                    pointer_q++;
-                } else {
-                    pointer_a++;
+                    countQ++;
+                }
+                else if (aDouble_vector_A_to_compare > aDouble_vector_Q_to_compare) {
+                    countA++;
                 }
             }
         }
 
-        double[] winners = new double[]{0.0, 1.0};
-
-        if (pointer_q > pointer_a) {
-            result[1] = winners[1];
-        } else {
-            result[0] = winners[0];
-        }
-
-        return result[0] < result[1];
+        return countA < countQ;
     }
 }

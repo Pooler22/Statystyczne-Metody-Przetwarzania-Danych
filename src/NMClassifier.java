@@ -19,7 +19,7 @@ class NMClassifier extends NNClassifier {
     double execute() {
         int match = 0;
 
-        computeMean();
+        mean();
 
         for (int[] elementTestSet : TestSet) {
             if (shortDistanceToClassA(dataSet[elementTestSet[0]])) {
@@ -35,7 +35,7 @@ class NMClassifier extends NNClassifier {
         return percent * match / TestSet.length;
     }
 
-    private void computeMean() {
+    private void mean() {
         int countA = 0;
         int countQ = 0;
         int selectedFeatures = dataSet[0].length;
@@ -70,8 +70,8 @@ class NMClassifier extends NNClassifier {
         double distanceQ = 0.0;
 
         for (int i = 0; i < point.length; i++) {
-            distanceA += Math.pow(meanA[i] - point[i], 2);
-            distanceQ += Math.pow(meanQ[i] - point[i], 2);
+            distanceA += Math.pow(point[i] - meanA[i], 2);
+            distanceQ += Math.pow(point[i] - meanQ[i], 2);
         }
 
         return Math.sqrt(distanceA) < Math.sqrt(distanceQ);

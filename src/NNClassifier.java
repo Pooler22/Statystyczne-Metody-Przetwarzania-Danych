@@ -1,7 +1,5 @@
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author pooler
@@ -31,17 +29,29 @@ class NNClassifier extends Classifier {
         return percent * match / TestSet.length;
     }
 
-    private boolean shortDistanceToClassA(double[] point) {
-        List<Double> distanceA = new ArrayList<>();
-        List<Double> distanceQ = new ArrayList<>();
+    private boolean shortDistanceToClassA(double[] pointFromTestSet) {
+        Collection<Double> distanceA = new ArrayList<>();
+        Collection<Double> distanceQ = new ArrayList<>();
 
         for (int[] elementTrainingSet : TrainingSet) {
+            Double euclidean = euclidean(pointFromTestSet, elementTrainingSet);
             if (ClassLabels[elementTrainingSet[0]] == 0) {
-                distanceA.add(euclidean(point, elementTrainingSet));
+                distanceA.add(euclidean);
             } else {
-                distanceQ.add(euclidean(point, elementTrainingSet));
+                distanceQ.add(euclidean);
             }
         }
-        return Collections.min(distanceA) < Collections.min(distanceQ);
+        for (int i = 0; i <  distanceA.size(); i++) {
+            Double minA = Collections.min(distanceA);
+            Double minB = Collections.min(distanceQ);
+            if (Objects.equals(minA, minB)) {
+                distanceA.remove(minA);
+                distanceA.remove(minB);
+            } else {
+                return minA < minB;
+            }
+        }
+        Random random = new Random();
+        return random.nextBoolean();
     }
 }

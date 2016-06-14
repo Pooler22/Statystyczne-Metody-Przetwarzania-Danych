@@ -1,9 +1,5 @@
 import Jama.Matrix;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -22,22 +18,23 @@ abstract class Classifier {
     double[][] dataSet;
     final double percent = 100;
 
-    public Classifier(double[][] dataSet, int[] ClassLabels) {
+    Classifier(double[][] dataSet, int[] ClassLabels) {
+        super();
         this.dataSet = new Matrix(dataSet).transpose().getArray();
         this.ClassLabels = ClassLabels;
     }
 
-    void generateTrainingAndTestSets(String TrainSetSizeInPercent) {
+    void generateTrainingAndTestSets(double trainSetSize) {
 
         int numberOfElements = dataSet.length;
         int selectedFeatures = dataSet[0].length;
 
         int[] Index = new int[numberOfElements];
         int TrainCount = 0, TestCount = 0;
-        double Th = Double.parseDouble(TrainSetSizeInPercent) / percent;
+        double trainSetSizeInPercent = trainSetSize / percent;
 
-        for (int i = 0; i < numberOfElements; i++) {
-            if (Math.random() <= Th) {
+        for (int i = 0; i < Index.length; i++) {
+            if (Math.random() <= trainSetSizeInPercent) {
                 Index[i] = TRAIN_SET;
                 TrainCount++;
             } else {
@@ -69,7 +66,7 @@ abstract class Classifier {
     abstract double execute();
 
     double euclidean(double[] element, int[] i) {
-        double sum = 0;
+        double sum = 0.0;
         for (int j = 0; j < element.length; j++) {
             sum += Math.pow(dataSet[i[0]][j] - element[j], 2);
         }

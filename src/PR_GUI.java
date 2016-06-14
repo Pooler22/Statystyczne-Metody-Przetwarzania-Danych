@@ -761,7 +761,7 @@ public class PR_GUI extends javax.swing.JFrame {
                 break;
         }
 
-        classifier.generateTrainingAndTestSets(TrainSetSizeTextField.getText());
+        classifier.generateTrainingAndTestSets(Double.parseDouble(TrainSetSizeTextField.getText()));
     }//GEN-LAST:event_TrainButtonActionPerformed
 
     private void ResultTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ResultTextFieldActionPerformed
