@@ -22,6 +22,7 @@ public class PR_GUI extends javax.swing.JFrame {
     private Data data;
     private Classifier classifier;
     private Selection selection;
+    private TestAll testAll;
 
     /**
      * Creates new form PR_GUI
@@ -29,6 +30,7 @@ public class PR_GUI extends javax.swing.JFrame {
     private PR_GUI() {
         this.selection = new Selection();
         this.data = new Data();
+        this.testAll = new TestAll();
         initComponents();
     }
 
