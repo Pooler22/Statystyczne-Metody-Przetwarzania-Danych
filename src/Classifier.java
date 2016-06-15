@@ -174,21 +174,17 @@ abstract class Classifier {
         }
         
         int TrainCount = 0;
-//        int start = part * (numberOfElements / parts);
-//        int end = (part + 1) * (numberOfElements / parts);
 
-        
-        TestSet = new int[numberOfElements][selectedFeatures];
-        TestCount = 0;
+        TrainingSet = new int[numberOfElements][selectedFeatures];
 
         for (int i = 0; i < numberOfElements; i++) {
             for (int j = 0; j < selectedFeatures; j++) {
-                TestSet[TestCount][j] = 
-                        partTab[(int) Math.floor(i/(numberOfElements/parts))] 
-                        * (int)(Math.floor((numberOfElements/parts)))
-                        + (int)(i%(Math.floor((numberOfElements/parts))));
+                int currentPart = (int) Math.floor(((double) i)/(numberOfElements/(parts - 1)));
+                int partSize = (int)Math.floor((numberOfElements/parts));
+                TrainingSet[TrainCount][j] =
+                        (partTab[currentPart] * partSize) + (i % partSize);
             }
-            TestCount++;
+            TrainCount++;
         }
     }
 }

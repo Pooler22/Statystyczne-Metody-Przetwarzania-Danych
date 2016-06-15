@@ -732,14 +732,14 @@ public class PR_GUI extends javax.swing.JFrame {
 
             String tmp1 = (String) FisherCriterionComboBox.getSelectedItem();
             if (tmp1.equals("SFS")) {
-                FSResult.setText(selection.selectFeaturesSFS(tmp, data) + "");
+                FSResult.append(selection.selectFeaturesSFS(tmp, data) + "\n");
             } else {
                 int[] a = selection.selectFeatures(tmp, data);
                 String out = "";
                 for (int i : a) {
                     out += i + " ";
                 }
-                FSResult.setText(out);
+                FSResult.append(out+"\n");
             }
         } else if (FeatureExtarctionRadioButton.isSelected()) {
             double TotEnergy = Double.parseDouble(PCAEnergyTextField.getText()) / 100.0;
@@ -753,7 +753,7 @@ public class PR_GUI extends javax.swing.JFrame {
             Matrix TransformMat = Extraction.extractFeatures(Cov, TotEnergy, k);
             data.FNew = Data.projectSamples(new Matrix(FFNorm), TransformMat);
             // FNew is a matrix with samples projected to a new feature space
-            ValueNewDimensionLabel.setText(data.FNew.length + "");
+            ValueNewDimensionLabel.setText(data.FNew.length + "\n");
         }
     }//GEN-LAST:event_DeriveFeatureSpaceButtonActionPerformed
 
@@ -786,7 +786,7 @@ public class PR_GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_ResultTextFieldActionPerformed
 
     private void ExecuteButtonActionPerformed2(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExecuteButtonActionPerformed2
-        ResultTextField.setText(Double.toString(classifier.execute()));
+        ResultTextField.setText(Double.toString(classifier.execute())+"\n");
         String selectedItem = (String) QualityClassificationComboBox.getSelectedItem();
 
         switch (selectedItem) {
