@@ -7,7 +7,7 @@
 /**
  * @author pooler
  */
-class NMClassifier extends NNClassifier {
+class NMClassifier extends Classifier {
 
     private double[] meanA, meanQ;
 
