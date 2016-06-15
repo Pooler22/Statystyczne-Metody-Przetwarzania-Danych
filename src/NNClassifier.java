@@ -1,4 +1,3 @@
-
 import java.util.*;
 
 /**
@@ -16,7 +15,7 @@ class NNClassifier extends Classifier {
         int match = 0;
 
         for (int[] elementTestSet : TestSet) {
-            if (shortDistanceToClassA(dataSet[elementTestSet[0]])) {
+            if (isShortenDistanceToClassA(dataSet[elementTestSet[0]])) {
                 if (ClassLabels[elementTestSet[0]] == 0) {
                     match++;
                 }
@@ -29,7 +28,7 @@ class NNClassifier extends Classifier {
         return percent * match / TestSet.length;
     }
 
-    private boolean shortDistanceToClassA(double[] pointFromTestSet) {
+    private boolean isShortenDistanceToClassA(double[] pointFromTestSet) {
         Collection<Double> distanceA = new ArrayList<>();
         Collection<Double> distanceQ = new ArrayList<>();
 
@@ -41,17 +40,18 @@ class NNClassifier extends Classifier {
                 distanceQ.add(euclidean);
             }
         }
-        for (int i = 0; i <  distanceA.size(); i++) {
+
+        for (int i = 0; i < distanceA.size(); i++) {
             Double minA = Collections.min(distanceA);
-            Double minB = Collections.min(distanceQ);
-            if (Objects.equals(minA, minB)) {
+            Double minQ = Collections.min(distanceQ);
+            if (Objects.equals(minA, minQ)) {
                 distanceA.remove(minA);
-                distanceA.remove(minB);
+                distanceA.remove(minQ);
             } else {
-                return minA < minB;
+                return minA < minQ;
             }
         }
-        Random random = new Random();
-        return random.nextBoolean();
+
+        return new Random().nextBoolean();
     }
 }

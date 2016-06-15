@@ -1,4 +1,5 @@
 import Jama.Matrix;
+
 import java.util.Random;
 
 /*
@@ -12,12 +13,12 @@ import java.util.Random;
  */
 abstract class Classifier {
 
+    final double percent = 100;
     int TRAIN_SET = 0, TEST_SET = 1;
     int trainCountA, trainCountB;
     int[] ClassLabels;
     int[][] TrainingSet, TestSet;
     double[][] dataSet;
-    final double percent = 100;
 
     Classifier(double[][] dataSet, int[] ClassLabels) {
         super();
@@ -26,10 +27,8 @@ abstract class Classifier {
     }
 
     void generateTrainingAndTestSets(double trainSetSize) {
-
         int numberOfElements = dataSet.length;
         int selectedFeatures = dataSet[0].length;
-
         int[] Index = new int[numberOfElements];
         int TrainCount = 0, TestCount = 0;
         double trainSetSizeInPercent = trainSetSize / percent;
@@ -66,26 +65,26 @@ abstract class Classifier {
 
     abstract double execute();
 
-    double euclidean(double[] element, int[] i) {
+    double euclidean(double[] elements, int[] k) {
         double sum = 0.0;
-        for (int j = 0; j < element.length; j++) {
-            sum += Math.pow(dataSet[i[0]][j] - element[j], 2);
+        for (int i = 0; i < elements.length; i++) {
+            sum += Math.pow(dataSet[k[0]][i] - elements[i], 2);
         }
         return Math.sqrt(sum);
     }
 
-    double crossValidation(int parts){
+    double crossValidation(int parts) {
         double result = 0;
-        
-        for(int i = 0; i < parts; i++){
+
+        for (int i = 0; i < parts; i++) {
             this.generateTrainingAndTestSetsExt(i, parts);
-             result += this.execute();
+            result += this.execute();
         }
-        
+
         return result / parts;
     }
-    
-        void generateTrainingAndTestSetsExt(int part,int parts) {
+
+    private void generateTrainingAndTestSetsExt(int part, int parts) {
 
         int numberOfElements = dataSet.length;
         int selectedFeatures = dataSet[0].length;
@@ -125,27 +124,27 @@ abstract class Classifier {
         }
     }
 
-    double bootstrap(int parts){
+    double bootstrap(int parts) {
         double result = 0;
-        
-        for(int i = 0; i < parts; i++){
+
+        for (int i = 0; i < parts; i++) {
             this.generateTrainingAndTestSetsExtBootstrap(generateParts(parts), parts, i);
-             result += this.execute();
+            result += this.execute();
         }
-        
+
         return result / parts;
     }
-    
-    int[] generateParts(int parts){
+
+    private int[] generateParts(int parts) {
         int partsTab[] = new int[parts];
         Random generator = new Random();
-        for(int i = 0; i < parts; i++){
+        for (int i = 0; i < parts; i++) {
             partsTab[i] = generator.nextInt(10);
         }
         return partsTab;
     }
-    
-    void generateTrainingAndTestSetsExtBootstrap(int[] partTab,int parts, int part) {
+
+    private void generateTrainingAndTestSetsExtBootstrap(int[] partTab, int parts, int part) {
         int numberOfElements = dataSet.length;
         int selectedFeatures = dataSet[0].length;
 
@@ -160,7 +159,7 @@ abstract class Classifier {
                 TestCount++;
             }
         }
-        
+
         TestSet = new int[TestCount][selectedFeatures];
         TestCount = 0;
 
@@ -172,15 +171,15 @@ abstract class Classifier {
                 TestCount++;
             }
         }
-        
+
         int TrainCount = 0;
 
         TrainingSet = new int[numberOfElements][selectedFeatures];
 
         for (int i = 0; i < numberOfElements; i++) {
             for (int j = 0; j < selectedFeatures; j++) {
-                int currentPart = (int) Math.floor(((double) i)/(numberOfElements/(parts - 1)));
-                int partSize = (int)Math.floor((numberOfElements/parts));
+                int currentPart = (int) Math.floor(((double) i) / (numberOfElements / (parts - 1)));
+                int partSize = (int) Math.floor((numberOfElements / parts));
                 TrainingSet[TrainCount][j] =
                         (partTab[currentPart] * partSize) + (i % partSize);
             }

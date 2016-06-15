@@ -14,11 +14,40 @@ import java.util.List;
 class Data {
 
     String InData; // dataset from a text file will be placed here
-    String[] classNames;
+    String[] ClassNames;
     int FeatureCount = 0;
     int[] ClassLabels, SampleCount;
     double[] vec;
     double[][] F, FNew; // original feature matrix and transformed feature matrix
+
+    static double[][] projectSamples(Matrix matrix, Matrix TransformMat) {
+        return (matrix.transpose().times(TransformMat)).transpose().getArrayCopy();
+    }
+
+    static double[][] centerAroundMean(double[][] M) {
+        int matrixLength = M.length;
+        double[] mean = new double[matrixLength];
+        for (int i = 0; i < matrixLength; i++) {
+            for (int j = 0; j < M[0].length; j++) {
+                mean[i] += M[i][j];
+            }
+        }
+        for (int i = 0; i < matrixLength; i++) {
+            mean[i] /= M[0].length;
+        }
+        for (int i = 0; i < matrixLength; i++) {
+            for (int j = 0; j < M[0].length; j++) {
+                M[i][j] -= mean[i];
+            }
+        }
+        return M;
+    }
+
+    static Matrix computeCovarianceMatrix(double[][] m) {
+        Matrix M = new Matrix(m);
+        Matrix MT = M.transpose();
+        return M.times(MT);
+    }
 
     void getDatasetParameters() throws Exception {
         // based on data stored in InData determine: class count and names, number of samples
@@ -63,9 +92,9 @@ class Data {
             stmp = stmp.substring(stmp.indexOf('$') + 1);
         }
         // based on results of the above analysis, create variables
-        classNames = new String[NameList.size()];
-        for (int i = 0; i < classNames.length; i++) {
-            classNames[i] = NameList.get(i);
+        ClassNames = new String[NameList.size()];
+        for (int i = 0; i < ClassNames.length; i++) {
+            ClassNames[i] = NameList.get(i);
         }
         SampleCount = new int[CountList.size()];
         for (int i = 0; i < SampleCount.length; i++) {
@@ -121,33 +150,4 @@ class Data {
         InData = s_out;
         return name;
     }
-
-    static double[][] projectSamples(Matrix FOld, Matrix TransformMat) {
-        return (FOld.transpose().times(TransformMat)).transpose().getArrayCopy();
-    }
-
-    static double[][] centerAroundMean(double[][] M) {
-        double[] mean = new double[M.length];
-        for (int i = 0; i < M.length; i++) {
-            for (int j = 0; j < M[0].length; j++) {
-                mean[i] += M[i][j];
-            }
-        }
-        for (int i = 0; i < M.length; i++) {
-            mean[i] /= M[0].length;
-        }
-        for (int i = 0; i < M.length; i++) {
-            for (int j = 0; j < M[0].length; j++) {
-                M[i][j] -= mean[i];
-            }
-        }
-        return M;
-    }
-
-    static Matrix computeCovarianceMatrix(double[][] m) {
-        Matrix M = new Matrix(m);
-        Matrix MT = M.transpose();
-        return M.times(MT);
-    }
-
 }

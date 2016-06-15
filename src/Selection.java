@@ -10,15 +10,14 @@ import java.util.stream.IntStream;
  */
 
 class Selection {
-    String selectFeaturesSFS(int d, Data data) {
-        int max[] = new int[d];
-        double G[][] = new double[d][];
-        String out = "";
+    String selectFeaturesSFS(int dimensions, Data data) {
+        int max[] = new int[dimensions];
+        double G[][] = new double[dimensions][];
 
-        max[0] = selectFeatures(1, data)[0];
+        max[0] = Integer.parseInt(selectFeatures(1, data).trim());
         G[0] = data.F[max[0]];
 
-        for (int j = 1; j < d; j++) {
+        for (int j = 1; j < dimensions; j++) {
             double FLD = 0, tmp;
             double tmpG[][] = new double[j + 1][];
 
@@ -38,15 +37,12 @@ class Selection {
             G[j] = data.F[max[j]];
         }
 
-        updateFNew(d, max, data);
+        updateFNew(dimensions, max, data);
 
-        for (int tmp : max) {
-            out += tmp + " ";
-        }
-        return out;
+        return intArrayToString(max);
     }
 
-    int[] selectFeatures(int d, Data data) {
+    String selectFeatures(int d, Data data) {
         int[] id = new int[d];
         int[] numbers = new int[d];
         String last = "";
@@ -66,7 +62,7 @@ class Selection {
                     id[i] = combination.getValue(i);
                 }
                 tmp = computeFisherMD(G, data);
-                map.put(tmp, idToString(id));
+                map.put(tmp, intArrayToString(id));
                 if (tmp > FLD) {
                     FLD = tmp;
                 }
@@ -82,27 +78,28 @@ class Selection {
         System.out.println(last);
 
         if (d != 1) {
-            numbers = Arrays.asList(last.split(" "))
+            numbers = Arrays.asList(last.split("\n"))
                     .stream()
                     .map(String::trim)
                     .mapToInt(Integer::parseInt).toArray();
         }
+
         updateFNew(d, numbers, data);
 
-        return numbers;
+        return intArrayToString(numbers);
     }
 
-    private void updateFNew(int d, int[] id, Data data) {
-        data.FNew = new double[d][];
-        for (int j = 0; j < d; j++) {
+    private void updateFNew(int dimension, int[] id, Data data) {
+        data.FNew = new double[dimension][];
+        for (int j = 0; j < dimension; j++) {
             data.FNew[j] = data.F[id[j]];
         }
     }
 
-    private String idToString(int[] id) {
+    private String intArrayToString(int[] id) {
         String str = "";
         for (int i : id) {
-            str += i + " ";
+            str += i + "\n";
         }
         return str;
     }
