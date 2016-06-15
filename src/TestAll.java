@@ -8,6 +8,7 @@ class TestAll {
     private double treningPart;
     private Data data;
     private int nValue;
+    int kDimensions;
 
     void init(int numberFisherDimensions, int numberSFSDimensions,
               double treningPart, int kDimensions, int nValue, int loopExecute,
@@ -15,6 +16,7 @@ class TestAll {
         this.treningPart = treningPart;
         this.nValue = nValue;
         this.data = data;
+        this.kDimensions = kDimensions;
         Selection selection = new Selection();
         StringBuilder out = new StringBuilder();
 
@@ -38,9 +40,6 @@ class TestAll {
 
         out.append(runClassifierExt(out));
 
-//        PrintWriter writer = new PrintWriter("the-file-name.txt", "UTF-8");
-//        writer.println(out);
-//        writer.close();
         JFileChooser fileChooser = new JFileChooser();
         if (fileChooser.showSaveDialog(pr_gui) == JFileChooser.APPROVE_OPTION) {
             //File file = fileChooser.getSelectedFile();
@@ -60,12 +59,12 @@ class TestAll {
 
         classifier = new NMClassifier(data.FNew, data.ClassLabels);
         out.append(runClassifier(classifier, nValue, out));
-//        
-//        classifier = new KNNClassifier(data.FNew, data.ClassLabels, kDimensions);        
-//        out += runClassifier(classifier, nValue);
-//        
-//        classifier = new KNMClassifier(data.FNew, data.ClassLabels, data.SampleCount, kDimensions);
-//        runClassifier(classifier, nValue);  
+
+        classifier = new KNNClassifier(data.FNew, data.ClassLabels, kDimensions);
+        out.append(runClassifier(classifier, nValue, out));
+
+        classifier = new KNMClassifier(data.FNew, data.ClassLabels, kDimensions);
+        out.append(runClassifier(classifier, nValue, out));
         return out;
     }
 

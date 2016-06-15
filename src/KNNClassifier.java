@@ -30,6 +30,8 @@ class KNNClassifier extends Classifier {
     }
 
     private boolean isShortenDistanceToClassA(double[] pointFromTestSet, int k) {
+        int countA = 0;
+        int countB = 0;
         List<Double> distanceA = new ArrayList<>();
         List<Double> distanceQ = new ArrayList<>();
 
@@ -42,8 +44,6 @@ class KNNClassifier extends Classifier {
             }
         }
 
-        int countA = 0;
-        int countB = 0;
         for (int j = 0; j < k; j++) {
             for (int i = 0; i < distanceA.size(); i++) {
                 Double minA = Collections.min(distanceA);

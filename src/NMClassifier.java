@@ -7,12 +7,10 @@
 /**
  * @author pooler
  */
-class NMClassifier extends Classifier {
-
-    private double[] meanA, meanQ;
+class NMClassifier extends KNMClassifier {
 
     NMClassifier(double[][] FNew, int[] ClassLabels) {
-        super(FNew, ClassLabels);
+        super(FNew, ClassLabels,1);
     }
 
     @Override
@@ -22,7 +20,7 @@ class NMClassifier extends Classifier {
         mean();
 
         for (int[] elementTestSet : TestSet) {
-            if (shortDistanceToClassA(dataSet[elementTestSet[0]])) {
+            if (isShortenDistanceToClassA(dataSet[elementTestSet[0]])) {
                 if (ClassLabels[elementTestSet[0]] == 0) {
                     match++;
                 }
@@ -35,45 +33,45 @@ class NMClassifier extends Classifier {
         return percent * match / TestSet.length;
     }
 
-    private void mean() {
+    private boolean isShortenDistanceToClassA(double[] point) {
+        double distanceA = 0.0;
+        double distanceQ = 0.0;
+
+        for (int i = 0; i < point.length; i++) {
+            distanceA += Math.pow(point[i] - mA[i], 2);
+            distanceQ += Math.pow(point[i] - mQ[i], 2);
+        }
+
+        return Math.sqrt(distanceA) < Math.sqrt(distanceQ);
+    }
+
+    void mean() {
         int countA = 0;
         int countQ = 0;
         int selectedFeatures = dataSet[0].length;
 
-        meanA = new double[selectedFeatures];
-        meanQ = new double[selectedFeatures];
+        mA = new double[selectedFeatures];
+        mQ = new double[selectedFeatures];
 
         for (int i = 0; i < selectedFeatures; i++) {
-            meanA[i] = meanQ[i] = 0;
+            mA[i] = mQ[i] = 0;
             countA = countQ = 0;
             for (int[] elementTrainSet : TrainingSet) {
                 if (ClassLabels[elementTrainSet[i]] == 0) {
-                    meanA[i] += dataSet[elementTrainSet[i]][i];
+                    mA[i] += dataSet[elementTrainSet[i]][i];
                     countA++;
                 } else {
-                    meanQ[i] += dataSet[elementTrainSet[i]][i];
+                    mQ[i] += dataSet[elementTrainSet[i]][i];
                     countQ++;
                 }
             }
         }
         trainCountA = countA;
-        trainCountB = countQ;
+        trainCountQ = countQ;
 
         for (int i = 0; i < selectedFeatures; i++) {
-            meanA[i] /= countA;
-            meanQ[i] /= countQ;
+            mA[i] /= countA;
+            mQ[i] /= countQ;
         }
-    }
-
-    private boolean shortDistanceToClassA(double[] point) {
-        double distanceA = 0.0;
-        double distanceQ = 0.0;
-
-        for (int i = 0; i < point.length; i++) {
-            distanceA += Math.pow(point[i] - meanA[i], 2);
-            distanceQ += Math.pow(point[i] - meanQ[i], 2);
-        }
-
-        return Math.sqrt(distanceA) < Math.sqrt(distanceQ);
     }
 }

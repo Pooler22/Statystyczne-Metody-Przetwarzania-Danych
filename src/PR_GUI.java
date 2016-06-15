@@ -791,7 +791,7 @@ public class PR_GUI extends javax.swing.JFrame {
                 classifier = new KNNClassifier(data.FNew, data.ClassLabels, Integer.parseInt(jComboBox1.getSelectedItem().toString()));
                 break;
             case "k-Nearest Mean (k-NM)":
-                classifier = new KNMClassifier(data.FNew, data.ClassLabels, data.SampleCount, Integer.parseInt(jComboBox1.getSelectedItem().toString()));
+                classifier = new KNMClassifier(data.FNew, data.ClassLabels,Integer.parseInt(jComboBox1.getSelectedItem().toString()));
                 break;
         }
 

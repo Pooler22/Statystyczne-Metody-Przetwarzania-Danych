@@ -15,7 +15,7 @@ abstract class Classifier {
 
     final double percent = 100;
     int TRAIN_SET = 0, TEST_SET = 1;
-    int trainCountA, trainCountB;
+    int trainCountA, trainCountQ;
     int[] ClassLabels;
     int[][] TrainingSet, TestSet;
     double[][] dataSet;

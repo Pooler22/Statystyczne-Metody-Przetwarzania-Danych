@@ -13,28 +13,28 @@ class Selection {
     String selectFeaturesSFS(int dimensions, Data data) {
         int max[] = new int[dimensions];
         double G[][] = new double[dimensions][];
+        double FLD, tmp;
 
         max[0] = Integer.parseInt(selectFeatures(1, data).trim());
         G[0] = data.F[max[0]];
 
-        for (int j = 1; j < dimensions; j++) {
-            double FLD = 0, tmp;
-            double tmpG[][] = new double[j + 1][];
+        for (int i = 1; i < dimensions; i++) {
+            double tmpG[][] = new double[i + 1][];
+            FLD = 0;
+            System.arraycopy(G, 0, tmpG, 0, i);
 
-            System.arraycopy(G, 0, tmpG, 0, j);
-
-            for (int i = 0; i < data.FeatureCount; i++) {
-                final int finalI = i;
+            for (int j = 0; j < data.FeatureCount; j++) {
+                final int finalI = j;
                 if (!IntStream.of(max).anyMatch(x -> x == finalI)) {
-                    tmpG[j] = data.F[i];
+                    tmpG[i] = data.F[j];
                     tmp = computeFisherMD(tmpG, data);
                     if (tmp > FLD) {
                         FLD = tmp;
-                        max[j] = i;
+                        max[i] = j;
                     }
                 }
             }
-            G[j] = data.F[max[j]];
+            G[i] = data.F[max[i]];
         }
 
         updateFNew(dimensions, max, data);
@@ -75,7 +75,6 @@ class Selection {
                 last = me2.getValue().toString();
             }
         }
-        System.out.println(last);
 
         if (d != 1) {
             numbers = Arrays.asList(last.split("\n"))
@@ -104,62 +103,63 @@ class Selection {
         return str;
     }
 
-    private int Fisher1D(int max_ind, Data data) {
+    private int Fisher1D(int maxInd, Data data) {
         double FLD = 0, tmp;
         for (int i = 0; i < data.FeatureCount; i++) {
             if ((tmp = computeFisherLD(data.F[i], data)) > FLD) {
                 FLD = tmp;
-                max_ind = i;
+                maxInd = i;
             }
         }
-        return max_ind;
+        return maxInd;
     }
 
-    private double computeFisherMD(double[][] vec, Data data) { //vec[0] vac[1] ... vec[n]
-        int indexA;
-        int indexB;
+    private double computeFisherMD(double[][] vec, Data data) {
         double result = 0;
-        double[] mA = new double[vec.length],
-                mB = new double[vec.length];
 
-        double[][]
-                A = new double[vec.length][data.SampleCount[0]],
-                B = new double[vec.length][data.SampleCount[1]];
+        int countA;
+        int countQ;
 
-        for (int a = 0; a < vec.length; a++) {
-            mA[a] = 0;
-            mB[a] = 0;
-            indexA = 0;
-            indexB = 0;
-            for (int i = 0; i < vec[a].length; i++) {
-                if (data.ClassLabels[i] == 0) {
-                    mA[a] += vec[a][i];
-                    A[a][indexA++] = vec[a][i];
+        double[] mA = new double[vec.length];
+        double[] mQ = new double[vec.length];
+
+        double[][] A = new double[vec.length][data.SampleCount[0]];
+        double[][] Q = new double[vec.length][data.SampleCount[1]];
+
+        for (int i = 0; i < vec.length; i++) {
+            mA[i] = 0;
+            mQ[i] = 0;
+            countA = 0;
+            countQ = 0;
+            for (int j = 0; j < vec[i].length; j++) {
+                if (data.ClassLabels[j] == 0) {
+                    mA[i] += vec[i][j];
+                    A[i][countA++] = vec[i][j];
                 } else {
-                    mB[a] += vec[a][i];
-                    B[a][indexB++] = vec[a][i];
+                    mQ[i] += vec[i][j];
+                    Q[i][countQ++] = vec[i][j];
                 }
             }
 
-            mA[a] /= data.SampleCount[0];
-            mB[a] /= data.SampleCount[1];
+            mA[i] /= data.SampleCount[0];
+            mQ[i] /= data.SampleCount[1];
 
-            int i;
-            i = 0;
-            for (double e : A[a]) {
-                A[a][i] = e - mA[a];
-                i++;
+            int k;
+            k = 0;
+            for (double e : A[i]) {
+                A[i][k] = e - mA[i];
+                k++;
             }
-            i = 0;
-            for (double e : B[a]) {
-                B[a][i] = e - mB[a];
-                i++;
+            k = 0;
+            for (double e : Q[i]) {
+                Q[i][k] = e - mQ[i];
+                k++;
             }
 
-            result += Math.pow((mB[a] - mA[a]), 2);
+            result += Math.pow((mQ[i] - mA[i]), 2);
         }
 
-        return Math.abs((Math.sqrt(result)) / (Data.computeCovarianceMatrix(B).det() + Data.computeCovarianceMatrix(A).det()));
+        return Math.abs((Math.sqrt(result)) / (Data.computeCovarianceMatrix(Q).det() + Data.computeCovarianceMatrix(A).det()));
     }
 
     private Generator<Integer> countCombinations(int n, Data data) {
@@ -167,26 +167,29 @@ class Selection {
         for (int i = 0; i < data.FeatureCount; i++) {
             vector.add(i);
         }
-        ICombinatoricsVector<Integer> initialVector = Factory.createVector(vector);
-        return Factory.createSimpleCombinationGenerator(initialVector, n);
+        return Factory.createSimpleCombinationGenerator(Factory.createVector(vector), n);
     }
 
     private double computeFisherLD(double[] vec, Data data) {
         data.vec = vec;
-        double mA = 0, mB = 0, sA = 0, sB = 0;
+        double mA = 0, mQ = 0;
+        double sA = 0, sQ = 0;
+
         for (int i = 0; i < vec.length; i++) {
             if (data.ClassLabels[i] == 0) {
                 mA += vec[i];
-                sA += vec[i] * vec[i];
+                sA += Math.pow(vec[i],2);
             } else {
-                mB += vec[i];
-                sB += vec[i] * vec[i];
+                mQ += vec[i];
+                sQ +=  Math.pow(vec[i],2);
             }
         }
+
         mA /= data.SampleCount[0];
-        mB /= data.SampleCount[1];
+        mQ /= data.SampleCount[1];
         sA = sA / data.SampleCount[0] - mA * mA;
-        sB = sB / data.SampleCount[1] - mB * mB;
-        return Math.abs(mA - mB) / (Math.sqrt(sA) + Math.sqrt(sB));
+        sQ = sQ / data.SampleCount[1] - mQ * mQ;
+
+        return Math.abs(mA - mQ) / (Math.sqrt(sA) + Math.sqrt(sQ));
     }
 }
