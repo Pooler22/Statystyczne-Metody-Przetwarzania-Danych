@@ -20,7 +20,7 @@ import java.util.logging.Logger;
  */
 public class PR_GUI extends javax.swing.JFrame {
     private Data data;
-    private Classifier classifier;
+    private Classifier classifier, classifierExt;
     private Selection selection;
     private TestAll testAll;
 
@@ -783,19 +783,24 @@ public class PR_GUI extends javax.swing.JFrame {
         switch (MethodComboBox.getSelectedItem().toString()) {
             case "Nearest neighbor (NN)":
                 classifier = new NNClassifier(data.FNew, data.ClassLabels);
+                classifierExt = new NNClassifier(data.FNew, data.ClassLabels);
                 break;
             case "Nearest Mean (NM)":
                 classifier = new NMClassifier(data.FNew, data.ClassLabels);
+                classifierExt = new NMClassifier(data.FNew, data.ClassLabels);
                 break;
             case "k-Nearest Neighbor (k-NN)":
                 classifier = new KNNClassifier(data.FNew, data.ClassLabels, Integer.parseInt(jComboBox1.getSelectedItem().toString()));
+                classifierExt = new KNNClassifier(data.FNew, data.ClassLabels, Integer.parseInt(jComboBox1.getSelectedItem().toString()));
                 break;
             case "k-Nearest Mean (k-NM)":
                 classifier = new KNMClassifier(data.FNew, data.ClassLabels,Integer.parseInt(jComboBox1.getSelectedItem().toString()));
+                classifierExt = new KNMClassifier(data.FNew, data.ClassLabels,Integer.parseInt(jComboBox1.getSelectedItem().toString()));
                 break;
         }
 
         classifier.generateTrainingAndTestSets(Double.parseDouble(TrainSetSizeTextField.getText()));
+        classifierExt.update(classifier);
 
     }//GEN-LAST:event_TrainButtonActionPerformed
 
@@ -808,10 +813,10 @@ public class PR_GUI extends javax.swing.JFrame {
 
         switch (QualityClassificationComboBox.getSelectedItem().toString()) {
             case "Cross-validation":
-                jTextArea1.append(Double.toString(classifier.crossValidation(Integer.parseInt(validationN.getText()))) + "\n");
+                jTextArea1.append(Double.toString(classifierExt.crossValidation(Integer.parseInt(validationN.getText()))) + "\n");
                 break;
             case "Bootstrap":
-                jTextArea1.append(Double.toString(classifier.bootstrap(Integer.parseInt(validationN.getText()))) + "\n");
+                jTextArea1.append(Double.toString(classifierExt.bootstrap(Integer.parseInt(validationN.getText()))) + "\n");
                 break;
         }
     }//GEN-LAST:event_ExecuteButtonActionPerformed2

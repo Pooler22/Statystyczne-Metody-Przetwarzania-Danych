@@ -172,4 +172,9 @@ class KNMClassifier extends Classifier {
         }
         return percent * match / TestSet.length;
     }
+
+    public void update(Classifier another, int k) {
+        update(another);
+        this.k = k;
+    }
 }

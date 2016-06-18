@@ -186,4 +186,13 @@ abstract class Classifier {
             TrainCount++;
         }
     }
+
+
+    public void update(Classifier another) {
+        trainCountA = another.trainCountA;
+        trainCountQ = another.trainCountQ;
+        ClassLabels = another.ClassLabels;
+        TrainingSet = another.TrainingSet;
+        TestSet = another.TestSet;
+    }
 }

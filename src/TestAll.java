@@ -23,22 +23,17 @@ class TestAll {
 
         data.readDataSet(pr_gui);
         data.getDatasetParameters();
-        out.append("Value Features Count: ").append(data.FeatureCount).append("\n");
-        out.append("Value Features Names: ");
-        for (String s : data.ClassNames) {
-            out.append(s).append(" ");
-        }
-        out.append("\nFIsher selection ");
+        out.append("Fisher selection ");
 
         data.fillFeatureMatrix();
 
         out.append(selection.selectFeatures(numberFisherDimensions, data));
 
-        out.append(runClassifierExt(out));
+        out.append(runClassifierExt(out, loopExecute));
 
-        out.append("SFS: ").append(selection.selectFeaturesSFS(numberSFSDimensions, data)).append("\n");
+        out.append(" SFS: ").append(selection.selectFeaturesSFS(numberSFSDimensions, data));
 
-        out.append(runClassifierExt(out));
+        out.append(runClassifierExt(out, loopExecute));
 
         JFileChooser fileChooser = new JFileChooser();
         if (fileChooser.showSaveDialog(pr_gui) == JFileChooser.APPROVE_OPTION) {
@@ -51,29 +46,40 @@ class TestAll {
 
     }
 
-    private StringBuilder runClassifierExt(StringBuilder out) {
-//        String out = "";
+    private StringBuilder runClassifierExt(StringBuilder out, int loop) {
         Classifier classifier;
-        classifier = new KNNClassifier(data.FNew, data.ClassLabels,1);
-        out.append(runClassifier(classifier, nValue, out));
 
-        classifier = new NMClassifier(data.FNew, data.ClassLabels);
-        out.append(runClassifier(classifier, nValue, out));
+        out.append("NN ");
+        for (int i = 0; i < loop; i++) {
 
-        classifier = new KNNClassifier(data.FNew, data.ClassLabels, kDimensions);
-        out.append(runClassifier(classifier, nValue, out));
+            classifier = new KNNClassifier(data.FNew, data.ClassLabels, 1);
+            out.append(runClassifier(classifier, nValue, out));
+        }
+        out.append(" NM ");
+        for (int i = 0; i < loop; i++) {
 
-        classifier = new KNMClassifier(data.FNew, data.ClassLabels, kDimensions);
-        out.append(runClassifier(classifier, nValue, out));
-        return out;
+            classifier = new NMClassifier(data.FNew, data.ClassLabels);
+            out.append(runClassifier(classifier, nValue, out));
+        }
+        out.append(" KNN ");
+        for (int i = 0; i < loop; i++) {
+
+            classifier = new KNNClassifier(data.FNew, data.ClassLabels, kDimensions);
+            out.append(runClassifier(classifier, nValue, out));
+        }
+        out.append(" KNM ");
+        for (int i = 0; i < loop; i++) {
+            classifier = new KNMClassifier(data.FNew, data.ClassLabels, kDimensions);
+            out.append(runClassifier(classifier, nValue, out));
+        }
+        return out.append("\n");
     }
 
     private StringBuilder runClassifier(Classifier classifier, int nValue, StringBuilder out) {
-//        String out = "";
         classifier.generateTrainingAndTestSets(treningPart);
-        out.append("Classifie: ").append(classifier.execute()).append("\n");
-        out.append("Cross-validation: ").append(classifier.crossValidation(nValue)).append("\n");
-        out.append("Bootstrap: ").append(classifier.bootstrap(nValue)).append("\n");
+        out.append(classifier.execute()).append(" ");
+        out.append(classifier.crossValidation(nValue)).append(" ");
+        out.append(classifier.bootstrap(nValue));
         return out;
     }
 
