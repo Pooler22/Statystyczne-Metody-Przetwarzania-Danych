@@ -45,8 +45,6 @@ class KNMClassifier extends Classifier {
                 }
             }
         }
-        trainCountA = countA;
-        trainCountQ = countB;
         for (int i = 0; i < mA.length; i++) {
             mA[i] /= countA;
             mQ[i] /= countB;

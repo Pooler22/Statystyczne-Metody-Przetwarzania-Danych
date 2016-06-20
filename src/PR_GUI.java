@@ -751,12 +751,12 @@ public class PR_GUI extends javax.swing.JFrame {
             return;
         }
         if (FeatureSelectionRadioButton.isSelected()) {
-            int NumberOfDimensions = Integer.parseInt(NumberOfDimensionsTextField.getText());
+            int numberOfDimensions = Integer.parseInt(NumberOfDimensionsTextField.getText());
 
             if (FisherCriterionComboBox.getSelectedItem().toString().equals("SFS")) {
-                FSResult.setText(selection.selectFeaturesSFS(NumberOfDimensions, data));
+                FSResult.setText(selection.selectFeaturesSFS(numberOfDimensions, data));
             } else {
-                FSResult.setText(selection.selectFeatures(NumberOfDimensions, data));
+                FSResult.setText(selection.selectFeatures(numberOfDimensions, data));
             }
 
         } else if (FeatureExtarctionRadioButton.isSelected()) {
@@ -782,8 +782,8 @@ public class PR_GUI extends javax.swing.JFrame {
 
         switch (MethodComboBox.getSelectedItem().toString()) {
             case "Nearest neighbor (NN)":
-                classifier = new NNClassifier(data.FNew, data.ClassLabels);
-                classifierExt = new NNClassifier(data.FNew, data.ClassLabels);
+                classifier = new KNNClassifier(data.FNew, data.ClassLabels,1);
+                classifierExt = new KNNClassifier(data.FNew, data.ClassLabels,1);
                 break;
             case "Nearest Mean (NM)":
                 classifier = new NMClassifier(data.FNew, data.ClassLabels);

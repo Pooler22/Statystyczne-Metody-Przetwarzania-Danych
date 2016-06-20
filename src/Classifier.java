@@ -15,7 +15,6 @@ abstract class Classifier {
 
     final double percent = 100;
     int TRAIN_SET = 0, TEST_SET = 1;
-    int trainCountA, trainCountQ;
     int[] ClassLabels;
     int[][] TrainingSet, TestSet;
     double[][] dataSet;
@@ -48,7 +47,7 @@ abstract class Classifier {
         TrainCount = 0;
         TestCount = 0;
 
-        for (int i = 0; i < numberOfElements; i++) {
+        for (int i = 0; i < Index.length; i++) {
             if (Index[i] == TRAIN_SET) {
                 for (int j = 0; j < selectedFeatures; j++) {
                     TrainingSet[TrainCount][j] = i;
@@ -65,10 +64,10 @@ abstract class Classifier {
 
     abstract double execute();
 
-    double euclidean(double[] elements, int[] k) {
+    double euclidean(double[] element, int[] numbersOfDataSetColumns) {
         double sum = 0.0;
-        for (int i = 0; i < elements.length; i++) {
-            sum += Math.pow(dataSet[k[0]][i] - elements[i], 2);
+        for (int i = 0; i < element.length; i++) {
+            sum += Math.pow(dataSet[numbersOfDataSetColumns[0]][i] - element[i], 2);
         }
         return Math.sqrt(sum);
     }
@@ -187,10 +186,7 @@ abstract class Classifier {
         }
     }
 
-
     public void update(Classifier another) {
-        trainCountA = another.trainCountA;
-        trainCountQ = another.trainCountQ;
         ClassLabels = another.ClassLabels;
         TrainingSet = another.TrainingSet;
         TestSet = another.TestSet;

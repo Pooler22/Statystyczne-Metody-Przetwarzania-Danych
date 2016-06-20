@@ -15,28 +15,30 @@ class KNNClassifier extends Classifier {
 
     @Override
     double execute() {
-        int match = 0;
+        int count = 0;
 
         for (int[] elementTestSet : TestSet) {
             if (isShortenDistanceToClassA(dataSet[elementTestSet[0]], k)) {
                 if (ClassLabels[elementTestSet[0]] == 0)
-                    match++;
+                    count++;
             } else {
                 if (ClassLabels[elementTestSet[0]] == 1)
-                    match++;
+                    count++;
             }
         }
-        return percent * match / TestSet.length;
+        return percent * count / TestSet.length;
     }
 
     private boolean isShortenDistanceToClassA(double[] pointFromTestSet, int k) {
         int countA = 0;
-        int countB = 0;
+        int countQ = 0;
+        Double euclidean;
         List<Double> distanceA = new ArrayList<>();
         List<Double> distanceQ = new ArrayList<>();
 
         for (int[] elementTrainingSet : TrainingSet) {
-            Double euclidean = euclidean(pointFromTestSet, elementTrainingSet);
+            euclidean = euclidean(pointFromTestSet, elementTrainingSet);
+
             if (ClassLabels[elementTrainingSet[0]] == 0) {
                 distanceA.add(euclidean);
             } else {
@@ -52,16 +54,14 @@ class KNNClassifier extends Classifier {
                     distanceA.remove(minA);
                     distanceA.remove(minQ);
                 } else {
-                    if(minA < minQ)
-                    {
+                    if (minA < minQ) {
                         countA++;
-                    }
-                    else{
-                        countB++;
+                    } else {
+                        countQ++;
                     }
                 }
             }
         }
-        return countA > countB;
+        return countA > countQ;
     }
 }

@@ -10,83 +10,80 @@ import java.util.stream.IntStream;
  */
 
 class Selection {
-    String selectFeaturesSFS(int dimensions, Data data) {
-        int max[] = new int[dimensions];
-        double G[][] = new double[dimensions][];
-        double FLD, tmp;
-
-        max[0] = Integer.parseInt(selectFeatures(1, data).trim());
-        G[0] = data.F[max[0]];
-
-        for (int i = 1; i < dimensions; i++) {
-            double tmpG[][] = new double[i + 1][];
-            FLD = 0;
-            System.arraycopy(G, 0, tmpG, 0, i);
-
-            for (int j = 0; j < data.FeatureCount; j++) {
-                final int finalI = j;
-                if (!IntStream.of(max).anyMatch(x -> x == finalI)) {
-                    tmpG[i] = data.F[j];
-                    tmp = computeFisherMD(tmpG, data);
-                    if (tmp > FLD) {
-                        FLD = tmp;
-                        max[i] = j;
-                    }
-                }
-            }
-            G[i] = data.F[max[i]];
-        }
-
-        updateFNew(dimensions, max, data);
-
-        return intArrayToString(max);
-    }
-
-    String selectFeatures(int d, Data data) {
-        int[] id = new int[d];
-        int[] numbers = new int[d];
+    String selectFeatures(int numberOfDimensions, Data data) {
+        int[] selectedIDs = new int[numberOfDimensions];
         String last = "";
-        if (d == 1) {
-            numbers[0] = id[0] = Fisher1D(id[0], data);
-        } else {
-            double FLD = 0, tmp;
-            Map<Double, String> map;
-            map = new HashMap<>();
 
-            Generator<Integer> vector = countCombinations(d, data);
-            //k = 2
+        if (numberOfDimensions == 1) {
+            selectedIDs[0] = Fisher1D(selectedIDs[0], data);
+        } else {
+            double tmp;
+            Map<Double, String> mapWithIDsAndResults;
+            Generator<Integer> vector;
+            double[][] G = new double[numberOfDimensions][];
+
+            mapWithIDsAndResults = new HashMap<>();
+            vector = countCombinations(numberOfDimensions, data);
+
             for (ICombinatoricsVector<Integer> combination : vector) {
-                double[][] G = new double[d][];
+
                 for (int i = 0; i < combination.getSize(); i++) {
                     G[i] = data.F[combination.getValue(i)];
-                    id[i] = combination.getValue(i);
+                    selectedIDs[i] = combination.getValue(i);
                 }
                 tmp = computeFisherMD(G, data);
-                map.put(tmp, intArrayToString(id));
-                if (tmp > FLD) {
-                    FLD = tmp;
-                }
+                mapWithIDsAndResults.put(tmp, intArrayToString(selectedIDs));
             }
 
-            Map<Double, String> map1 = new TreeMap<>(map);
-            Set set2 = map1.entrySet();
-            for (Object aSet2 : set2) {
-                Map.Entry me2 = (Map.Entry) aSet2;
-                last = me2.getValue().toString();
+            Set set = new TreeMap<>(mapWithIDsAndResults).entrySet();
+            for (Object elementOfSet : set) {
+                last = ((Map.Entry) elementOfSet).getValue().toString();
             }
-        }
 
-        if (d != 1) {
-            numbers = Arrays.asList(last.split("\n"))
+            selectedIDs = Arrays.asList(last.split("\n"))
                     .stream()
                     .map(String::trim)
                     .mapToInt(Integer::parseInt).toArray();
         }
 
-        updateFNew(d, numbers, data);
+        updateFNew(numberOfDimensions, selectedIDs, data);
 
-        return intArrayToString(numbers);
+        return intArrayToString(selectedIDs);
     }
+
+    String selectFeaturesSFS(int numberOfDimensions, Data data) {
+        int selectedIDS[] = new int[numberOfDimensions];
+        double G[][] = new double[numberOfDimensions][];
+        double FLD, tmp;
+
+        selectedIDS[0] = Integer.parseInt(selectFeatures(1, data).trim());
+        G[0] = data.F[selectedIDS[0]];
+
+        for (int i = 1; i < numberOfDimensions; i++) {
+            double tmpG[][] = new double[i + 1][];
+            FLD = 0;
+
+            System.arraycopy(G, 0, tmpG, 0, i); // src, posSrc, dest, posDest, length
+
+            for (int j = 0; j < data.FeatureCount; j++) {
+                final int finalI = j;
+                if (!IntStream.of(selectedIDS).anyMatch(x -> x == finalI)) {
+                    tmpG[i] = data.F[j];
+                    tmp = computeFisherMD(tmpG, data);
+                    if (tmp > FLD) {
+                        FLD = tmp;
+                        selectedIDS[i] = j;
+                    }
+                }
+            }
+            G[i] = data.F[selectedIDS[i]];
+        }
+
+        updateFNew(numberOfDimensions, selectedIDS, data);
+
+        return intArrayToString(selectedIDS);
+    }
+
 
     private void updateFNew(int dimension, int[] id, Data data) {
         data.FNew = new double[dimension][];
@@ -106,7 +103,8 @@ class Selection {
     private int Fisher1D(int maxInd, Data data) {
         double FLD = 0, tmp;
         for (int i = 0; i < data.FeatureCount; i++) {
-            if ((tmp = computeFisherLD(data.F[i], data)) > FLD) {
+            tmp = computeFisherLD(data.F[i], data);
+            if (tmp > FLD) {
                 FLD = tmp;
                 maxInd = i;
             }
@@ -171,25 +169,24 @@ class Selection {
     }
 
     private double computeFisherLD(double[] vec, Data data) {
-        data.vec = vec;
-        double mA = 0, mQ = 0;
+        double meanA = 0, meanQ = 0;
         double sA = 0, sQ = 0;
 
         for (int i = 0; i < vec.length; i++) {
             if (data.ClassLabels[i] == 0) {
-                mA += vec[i];
-                sA += Math.pow(vec[i],2);
+                meanA += vec[i];
+                sA += Math.pow(vec[i], 2);
             } else {
-                mQ += vec[i];
-                sQ +=  Math.pow(vec[i],2);
+                meanQ += vec[i];
+                sQ += Math.pow(vec[i], 2);
             }
         }
 
-        mA /= data.SampleCount[0];
-        mQ /= data.SampleCount[1];
-        sA = sA / data.SampleCount[0] - mA * mA;
-        sQ = sQ / data.SampleCount[1] - mQ * mQ;
+        meanA /= data.SampleCount[0];
+        meanQ /= data.SampleCount[1];
+        sA = sA / data.SampleCount[0] - Math.pow(meanA, 2);
+        sQ = sQ / data.SampleCount[1] - Math.pow(meanQ, 2);
 
-        return Math.abs(mA - mQ) / (Math.sqrt(sA) + Math.sqrt(sQ));
+        return Math.abs(meanA - meanQ) / (Math.sqrt(sA) + Math.sqrt(sQ));
     }
 }

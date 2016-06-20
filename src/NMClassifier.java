@@ -7,30 +7,32 @@
 /**
  * @author pooler
  */
-class NMClassifier extends KNMClassifier {
+class NMClassifier extends Classifier {
+
+    double[] mA, mQ;
 
     NMClassifier(double[][] FNew, int[] ClassLabels) {
-        super(FNew, ClassLabels,1);
+        super(FNew, ClassLabels);
     }
 
     @Override
     double execute() {
-        int match = 0;
+        int count = 0;
 
         mean();
 
         for (int[] elementTestSet : TestSet) {
             if (isShortenDistanceToClassA(dataSet[elementTestSet[0]])) {
                 if (ClassLabels[elementTestSet[0]] == 0) {
-                    match++;
+                    count++;
                 }
             } else {
                 if (ClassLabels[elementTestSet[0]] == 1) {
-                    match++;
+                    count++;
                 }
             }
         }
-        return percent * match / TestSet.length;
+        return percent * count / TestSet.length;
     }
 
     private boolean isShortenDistanceToClassA(double[] point) {
@@ -46,8 +48,8 @@ class NMClassifier extends KNMClassifier {
     }
 
     void mean() {
-        int countA = 0;
-        int countQ = 0;
+        int countA;
+        int countQ;
         int selectedFeatures = dataSet[0].length;
 
         mA = new double[selectedFeatures];
@@ -65,11 +67,6 @@ class NMClassifier extends KNMClassifier {
                     countQ++;
                 }
             }
-        }
-        trainCountA = countA;
-        trainCountQ = countQ;
-
-        for (int i = 0; i < selectedFeatures; i++) {
             mA[i] /= countA;
             mQ[i] /= countQ;
         }
