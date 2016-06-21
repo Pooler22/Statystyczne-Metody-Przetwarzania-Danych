@@ -809,7 +809,29 @@ public class PR_GUI extends javax.swing.JFrame {
             return; // no reduced feature space have been derived
         }
 
-        ResultTextField.append(Double.toString(classifier.execute()) + "\n");
+        switch (MethodComboBox.getSelectedItem().toString()) {
+            case "Nearest neighbor (NN)":
+                NNClassifier tmp1 = new NNClassifier(data.FNew, data.ClassLabels);
+                tmp1.update(classifier);
+                ResultTextField.append(Double.toString(((NNClassifier) tmp1).execute()) + "\n");
+                break;
+            case "Nearest Mean (NM)":
+                NMClassifier tmp2 = new NMClassifier(data.FNew, data.ClassLabels);
+                tmp2.update(classifier);
+                ResultTextField.append(Double.toString(((NMClassifier) tmp2).execute()) + "\n");
+                break;
+            case "k-Nearest Neighbor (k-NN)":
+                KNNClassifier tmp3 = new KNNClassifier(data.FNew, data.ClassLabels,Integer.parseInt(jComboBox1.getSelectedItem().toString()));
+                tmp3.update(classifier);
+                ResultTextField.append(Double.toString(((KNNClassifier) tmp3).execute()) + "\n");
+                break;
+            case "k-Nearest Mean (k-NM)":
+                KNMClassifier tmp4 = new KNMClassifier(data.FNew, data.ClassLabels,Integer.parseInt(jComboBox1.getSelectedItem().toString()));
+                tmp4.update(classifier);
+                ResultTextField.append(Double.toString(((KNMClassifier) tmp4).execute()) + "\n");
+                break;
+        }
+
 
         switch (QualityClassificationComboBox.getSelectedItem().toString()) {
             case "Cross-validation":
