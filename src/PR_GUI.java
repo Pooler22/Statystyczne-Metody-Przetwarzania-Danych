@@ -798,9 +798,23 @@ public class PR_GUI extends javax.swing.JFrame {
                 classifierExt = new KNMClassifier(data.FNew, data.ClassLabels,Integer.parseInt(jComboBox1.getSelectedItem().toString()));
                 break;
         }
-
         classifier.generateTrainingAndTestSets(Double.parseDouble(TrainSetSizeTextField.getText()));
-        classifierExt.update(classifier);
+
+        switch (MethodComboBox.getSelectedItem().toString()) {
+            case "Nearest neighbor (NN)":
+                classifierExt.update(classifier);
+                break;
+            case "Nearest Mean (NM)":
+                classifierExt.update(classifier);
+                break;
+            case "k-Nearest Neighbor (k-NN)":
+                ((KNNClassifier)classifierExt).update((KNNClassifier)classifier);
+                break;
+            case "k-Nearest Mean (k-NM)":
+                classifierExt.update(classifier);
+                break;
+        }
+
 
     }//GEN-LAST:event_TrainButtonActionPerformed
 

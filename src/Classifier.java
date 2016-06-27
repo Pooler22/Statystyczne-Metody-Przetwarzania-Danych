@@ -139,7 +139,7 @@ abstract class Classifier {
         int partsTab[] = new int[parts];
         Random generator = new Random();
         for (int i = 0; i < parts; i++) {
-            partsTab[i] = generator.nextInt(10);
+            partsTab[i] = generator.nextInt(parts);
         }
         return partsTab;
     }
@@ -180,8 +180,7 @@ abstract class Classifier {
             for (int j = 0; j < selectedFeatures; j++) {
                 int currentPart = (int) Math.floor(((double) i) / (numberOfElements / (parts - 1)));
                 int partSize = (int) Math.floor((numberOfElements / parts));
-                TrainingSet[TrainCount][j] =
-                        (partTab[currentPart] * partSize) + (i % partSize);
+                TrainingSet[TrainCount][j] = (partTab[currentPart] * partSize) + (i % partSize);
             }
             TrainCount++;
         }

@@ -45,7 +45,6 @@ class KNNClassifier extends Classifier {
         }
 
         for (int j = 0; j < k; j++) {
-            for (int i = 0; i < distanceA.size(); i++) {
                 Double minA = Collections.min(distanceA);
                 Double minQ = Collections.min(distanceQ);
                 if (Objects.equals(minA, minQ)) {
@@ -54,14 +53,25 @@ class KNNClassifier extends Classifier {
                 } else {
                     if(minA < minQ)
                     {
+                        distanceA.remove(minA);
                         countA++;
                     }
                     else{
+                        distanceQ.remove(minQ);
                         countB++;
                     }
                 }
-            }
         }
         return countA > countB;
+    }
+
+
+    public void update(KNNClassifier another) {
+        this.k = another.k;
+        trainCountA = another.trainCountA;
+        trainCountQ = another.trainCountQ;
+        ClassLabels = another.ClassLabels;
+        TrainingSet = another.TrainingSet;
+        TestSet = another.TestSet;
     }
 }
